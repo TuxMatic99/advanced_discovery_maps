@@ -1,0 +1,167 @@
+# textdomain: advanced_discovery_maps
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
+Marker Management=Gerenciamento de Marcadores
+Total Markers: @1=Total de Marcadores: @1
+No markers found. Create markers using the map interface (/map)=Nenhum marcador encontrado. Crie marcadores usando a interface do mapa (/map)
+away=de distância
+Edit Name=Editar Nome
+Edit Color=Editar Cor
+Remove Waypoint=Remover Rastreador
+Show Waypoint=Mostrar Rastreador
+Delete=Excluir
+Teleport=Teletransportar
+Add Marker by Coordinates:=Adicionar Marcador por Coordenadas:
+X:=X:
+Y:=Y:
+Z:=Z:
+Name:=Nome:
+Add Marker=Adicionar Marcador
+Close=Fechar
+Open Map=Abrir Mapa
+Delete All=Excluir Todos
+Note: You need 'teleport' privilege to use teleport buttons=Nota: Você precisa do privilégio 'teleport' para se teletransportar
+Select Color for '@1'=Selecionar Cor para '@1'
+Cancel=Cancelar
+Edit Marker Name=Editar Nome do Marcador
+Current name: @1=Nome atual: @1
+New name:=Novo nome:
+Save=Salvar
+Error: Please enter valid numeric coordinates for X, Y, and Z=Erro: Insira coordenadas numéricas válidas para X, Y e Z
+Marker at @1,@2,@3=Marcador em @1,@2,@3
+Deleted marker '@1'=Marcador '@1' excluído
+You don't have permission to teleport. Need 'teleport' privilege.=Você não tem permissão. É necessário o privilégio 'teleport'.
+Teleported to marker '@1' at @2, @3, @4=Teletransportado para o marcador '@1' em @2, @3, @4
+Waypoint set for marker '@1'=Rastreador definido para o marcador '@1'
+Waypoint removed=Rastreador removido
+No active waypoint found=Nenhum rastreador ativo encontrado
+Error: Invalid marker ID=Erro: ID de marcador inválido
+Error: Marker name cannot be empty=Erro: O nome do marcador não pode estar vazio
+Renamed marker from '@1' to '@2'=Marcador renomeado de '@1' para '@2'
+Error: Marker not found=Erro: Marcador não encontrado
+Changed color of marker '@1' from @2 to @3=Cor do marcador '@1' alterada de @2 para @3
+Open the marker management interface=Abrir a interface de gerenciamento de marcadores
+Marker GUI opened=Interface de marcadores aberta
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
+Red=Vermelho
+Blue=Azul
+Green=Verde
+Yellow=Amarelo
+Purple=Roxo
+Orange=Laranja
+White=Branco
+Pink=Rosa
+Discovered Map - Close with ESC=Mapa Descoberto - Feche com ESC
+Navigation:=Navegação:
+N ↑=N ↑
+W ←=W ←
+E →=E →
+S ↓=S ↓
+Center on Player=Centralizar no Jogador
+Zoom: @1x=Zoom: @1x
+Zoom Out (-)=Afastar (-)
+Zoom In (+)=Aproximar (+)
+View Relief=Ver Relevo
+View Satellite=Ver Satélite
+View Cave Map=Ver Mapa de Cavernas
+Measurement Unit=Unidade de Medida
+Place Marker:=Colocar Marcador:
+Marker Name:=Nome do Marcador:
+Manage Markers=Gerenciar Marcadores
+Track Marker=Rastrear Marcador
+Closest=Mais próximo
+None=Nenhum
+Coordinates=Coordenadas
+Destination=Destino
+Distance=Distância
+Quadrant=Quadrante
+Explored=Explorada
+View=Vista
+Markers=Marcadores
+Map Book=Livro de Mapas
+Right-click to open the persistent map=Clique com o botão direito para abrir o mapa persistente
+Open the persistent map=Abrir o mapa persistente
+Map opened=Mapa aberto
+New area discovered!=Nova área descoberta!
+Welcome! You've been given a Map Book. left-click it to explore the world!=Bem-vindo! Você recebeu um Livro de Mapas. Clique com o botão esquerdo para explorar o mundo!
+Show Grid (Quadrants)=Mostrar Grade (Quadrantes)
+Hide Grid (Quadrants)=Ocultar Grade (Quadrantes)
+Camera Alt=Altitude da Câmera
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
+Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=Iniciando escaneamento topográfico de @1 quadrante(s). Você pode continuar jogando, avisarei quando terminar...
+Topography updated successfully! Close and reopen the map to see the changes.=Topografia atualizada com sucesso! Feche e reabra o mapa para ver as alterações de toda a área.
+Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=O raio máximo permitido é 3 (49 quadrantes) para evitar sobrecarga de memória.
+No discovered quadrants in this radius to update.=Nenhum quadrante descoberto neste raio para atualizar.
+Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=Força a atualização do mapa. Uso: /actualizar_mapa [raio]. (Ex: /actualizar_mapa 1 atualiza 3x3 quadrantes)
+Topographic Profile=Perfil Topográfico
+Generating profile...=Gerando perfil...
+
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=Análise Topográfica
+Elevación: Máx @1m | Mín @2m=Elevação: Máx @1m | Mín @2m
+Prof. Agua: @1m | Prof. Cueva: @2m=Prof. Água: @1m | Prof. Caverna: @2m
+(Avatar)=(Avatar)
+Acercar Lente (+)=Aproximar Lente (+)
+Alejar Lente (-)=Afastar Lente (-)
+Volver al Mapa=Voltar ao Mapa
+Cerrar Escáner=Fechar Scanner
+Profile X (E-W)=Perfil X (L-O)
+Profile Z (N-S)=Perfil Z (N-S)
+Back to Map=Voltar ao Mapa
+
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=>> Escavação Assíncrona concluída.
+La varita se está enfriando. Espera @1 segundos.=A varinha está esfriando. Aguarde @1 segundos.
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=>> Iniciando Escavação Assíncrona (Raio @1). Descendo...
+>> Radio de excavación ajustado a @1 bloques.=>> Raio de escavação ajustado para @1 blocos.
+Calibrar Varita Tuxmatic=Calibrar Varinha Tuxmatic
+Radio de Destrucción (1-100)=Raio de Destruição (1-100)
+Guardar=Salvar
+Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=Varinha de Escavação (Tuxmatic)\nClique Esq: Destrói a geologia (Até R=100).\nClique Dir: Configura o raio.
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=O scanner geológico está recarregando para proteger a memória. Aguarde @1 segundos.
+Iniciando escaneo topográfico transversal...=Iniciando escaneamento topográfico transversal...
+
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Abre a interface principal do Mapa Telemétrico Avançado.\nUso: /map\nA partir da interface, você pode analisar a topografia, gerenciar rastreadores e ver relevos 3D.
+Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Ativa/Desativa a Visão Noturna Tática.\nUso: /nv\nEmissor adaptativo que ilumina cavernas e zonas subaquáticas com custo zero.
+Datos no inicializados.=Dados não inicializados.
+>> Visión Nocturna: ACTIVADA=>> Visão Noturna: ATIVADA
+>> Visión Nocturna: DESACTIVADA=>> Visão Noturna: DESATIVADA
+Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Controla a velocidade de voo.\nUso: /flyspeed <número>\nNota: Ativado apenas no ar para não alterar a velocidade em terra.
+>> Velocidad de vuelo establecida a @1=>> Velocidade de voo definida para @1
+Velocidad inválida. Usa un número positivo.=Velocidade inválida. Use um número positivo.
+Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=Controla a sua velocidade de corrida em terra firme.\nUso: /runspeed <número> (Ex: /runspeed 2)
+>> Velocidad de carrera establecida a @1=>> Velocidade de corrida definida para @1
+Valor inválido. Usa un número positivo.=Valor inválido. Use um número positivo.
+Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Controla a potência dos seus saltos.\nUso: /jumpheight <número> (Ex: /jumpheight 1.5)
+>> Altura de salto establecida a @1=>> Altura do salto definida para @1
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=Adiciona a Varinha de Escavação (Tuxmatic) ao seu inventário.\nRequer o privilégio 'give'.
+>> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal implantado: Varinha de Escavação recebida.
+Error: Tu inventario está lleno.=Erro: Seu inventário está cheio.
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Mostra o diretório de todos os comandos e habilidades táticas do mod.
+=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== MANUAL TÁTICO (ADVANCED DISCOVERY MAPS) ===
+Abre la interfaz del mapa topográfico.=Abre a interface do mapa topográfico.
+Activa/desactiva la visión nocturna (Coste Cero).=Ativa/desativa a visão noturna (Custo Zero).
+Calibra la velocidad de vuelo en el aire.=Calibra a velocidade de voo no ar.
+Calibra la velocidad de carrera en tierra.=Calibra a velocidade de corrida em terra.
+Calibra la potencia y altura de salto.=Calibra a potência e a altura do salto.
+Fuerza un escaneo geológico manual.=Força um escaneamento geológico manual.
+Gestiona tus grupos para compartir exploración.=Gerencia seus grupos para compartilhar a exploração.
+Abre el menú de gestión de rastreadores.=Abre o menu de gerenciamento de rastreadores.
+=== ARSENAL CLASIFICADO ====== ARSENAL CLASSIFICADO ===
+Invoca la Varita de Excavación (Requiere permisos).=Invoca a Varinha de Escavação (Requer permissões).
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Nota: Para ativar todos os privilégios no Luanti, use o comando /grant <seu_usuario> all ou /grantme all

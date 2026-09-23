@@ -1,0 +1,167 @@
+# textdomain: advanced_discovery_maps
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
+Marker Management=マーカー管理
+Total Markers: @1=合計マーカー: @1
+No markers found. Create markers using the map interface (/map)=マーカーが見つかりません。マップ画面（/map）から作成してください
+away=の距離
+Edit Name=名前を編集
+Edit Color=色を編集
+Remove Waypoint=ウェイポイントを削除
+Show Waypoint=ウェイポイントを表示
+Delete=削除
+Teleport=テレポート
+Add Marker by Coordinates:=座標でマーカーを追加:
+X:=X:
+Y:=Y:
+Z:=Z:
+Name:=名前:
+Add Marker=マーカーを追加
+Close=閉じる
+Open Map=マップを開く
+Delete All=すべて削除
+Note: You need 'teleport' privilege to use teleport buttons=注: テレポートには「teleport」権限が必要です
+Select Color for '@1'='@1' の色を選択
+Cancel=キャンセル
+Edit Marker Name=マーカー名を編集
+Current name: @1=現在の名前: @1
+New name:=新しい名前:
+Save=保存
+Error: Please enter valid numeric coordinates for X, Y, and Z=エラー: X、Y、Zには有効な数値を入力してください
+Marker at @1,@2,@3=@1,@2,@3のマーカー
+Deleted marker '@1'=マーカー '@1' を削除しました
+You don't have permission to teleport. Need 'teleport' privilege.=テレポートする権限がありません。「teleport」権限が必要です。
+Teleported to marker '@1' at @2, @3, @4=@2, @3, @4 のマーカー '@1' にテレポートしました
+Waypoint set for marker '@1'=マーカー '@1' のウェイポイントを設定しました
+Waypoint removed=ウェイポイントを削除しました
+No active waypoint found=アクティブなウェイポイントが見つかりません
+Error: Invalid marker ID=エラー: 無効なマーカーIDです
+Error: Marker name cannot be empty=エラー: マーカー名を入力してください
+Renamed marker from '@1' to '@2'=マーカー名を '@1' から '@2' に変更しました
+Error: Marker not found=エラー: マーカーが見つかりません
+Changed color of marker '@1' from @2 to @3=マーカー '@1' の色を @2 から @3 に変更しました
+Open the marker management interface=マーカー管理インターフェースを開く
+Marker GUI opened=マーカーGUIを開きました
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
+Red=赤
+Blue=青
+Green=緑
+Yellow=黄
+Purple=紫
+Orange=オレンジ
+White=白
+Pink=ピンク
+Discovered Map - Close with ESC=発見されたマップ - ESCで閉じる
+Navigation:=ナビゲーション:
+N ↑=北 ↑
+W ←=西 ←
+E →=東 →
+S ↓=南 ↓
+Center on Player=プレイヤーを中心に表示
+Zoom: @1x=ズーム: @1x
+Zoom Out (-)=縮小 (-)
+Zoom In (+)=拡大 (+)
+View Relief=地形を表示
+View Satellite=衛星画像を表示
+View Cave Map=洞窟マップを表示
+Measurement Unit=測定単位
+Place Marker:=マーカーを配置:
+Marker Name:=マーカー名:
+Manage Markers=マーカーを管理
+Track Marker=マーカーを追跡
+Closest=最も近い
+None=なし
+Coordinates=座標
+Destination=目的地
+Distance=距離
+Quadrant=象限
+Explored=探索済み
+View=ビュー
+Markers=マーカー
+Map Book=マップブック
+Right-click to open the persistent map=右クリックでマップを開く
+Open the persistent map=マップを開く
+Map opened=マップを開きました
+New area discovered!=新しいエリアを発見しました！
+Welcome! You've been given a Map Book. left-click it to explore the world!=ようこそ！マップブックが配布されました。左クリックして探索しましょう！
+Show Grid (Quadrants)=グリッドを表示（象限）
+Hide Grid (Quadrants)=グリッドを隠す（象限）
+Camera Alt=カメラ高度
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
+Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=@1象限の地形スキャンを開始します。完了時に通知します...
+Topography updated successfully! Close and reopen the map to see the changes.=地形の更新が成功しました！変更を確認するにはマップを開き直してください。
+Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=メモリ過負荷を防ぐため、最大半径は3（49象限）に制限されています。
+No discovered quadrants in this radius to update.=この半径内に更新する探索済みの象限がありません。
+Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=マップを強制更新します。使用法: /actualizar_mapa [半径]
+Topographic Profile=地形プロファイル
+Generating profile...=プロファイルを生成中...
+
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=地形分析
+Elevación: Máx @1m | Mín @2m=標高: 最高 @1m | 最低 @2m
+Prof. Agua: @1m | Prof. Cueva: @2m=水深: @1m | 洞窟の深さ: @2m
+(Avatar)=(アバター)
+Acercar Lente (+)=レンズを拡大 (+)
+Alejar Lente (-)=レンズを縮小 (-)
+Volver al Mapa=マップに戻る
+Cerrar Escáner=スキャナーを閉じる
+Profile X (E-W)=プロファイル X (東西)
+Profile Z (N-S)=プロファイル Z (南北)
+Back to Map=マップに戻る
+
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=>> 非同期発掘が完了しました。
+La varita se está enfriando. Espera @1 segundos.=杖が冷却中です。@1秒お待ちください。
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=>> 非同期発掘を開始します（半径 @1）。降下中...
+>> Radio de excavación ajustado a @1 bloques.=>> 発掘半径が@1ブロックに設定されました。
+Calibrar Varita Tuxmatic=Tuxmaticの杖を調整
+Radio de Destrucción (1-100)=破壊半径 (1-100)
+Guardar=保存
+Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=発掘の杖 (Tuxmatic)\n左クリック: 地形を破壊 (最大 R=100)\n右クリック: 半径を設定
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=スキャナーを再充電しています。@1秒お待ちください。
+Iniciando escaneo topográfico transversal...=横断地形スキャンを開始します...
+
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=高度テレメトリマップを開きます。\n使用法: /map\n地形分析、トラッカー管理、3D地形の表示が可能です。
+Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=戦術的ナイトビジョンを切り替えます。\n使用法: /nv\n負荷ゼロで洞窟や水中を照らします。
+Datos no inicializados.=データが初期化されていません。
+>> Visión Nocturna: ACTIVADA=>> ナイトビジョン: オン
+>> Visión Nocturna: DESACTIVADA=>> ナイトビジョン: オフ
+Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=飛行速度を制御します。\n使用法: /flyspeed <数値>\n注: 空中でしか有効になりません。
+>> Velocidad de vuelo establecida a @1=>> 飛行速度が @1 に設定されました
+Velocidad inválida. Usa un número positivo.=無効な速度です。正の数を入力してください。
+Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=地上の走行速度を制御します。\n使用法: /runspeed <数値>
+>> Velocidad de carrera establecida a @1=>> 走行速度が @1 に設定されました
+Valor inválido. Usa un número positivo.=無効な値です。正の数を入力してください。
+Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=ジャンプ力を制御します。\n使用法: /jumpheight <数値>
+>> Altura de salto establecida a @1=>> ジャンプの高さが @1 に設定されました
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=発掘の杖 (Tuxmatic) を追加します。\n'give' 権限が必要です。
+>> Arsenal desplegado: Varita de Excavación recibida.=>> 武器展開: 発掘の杖を受け取りました。
+Error: Tu inventario está lleno.=エラー: インベントリがいっぱいです。
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Modのすべてのコマンドと戦術的スキルを表示します。
+=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== 戦術マニュアル (ADVANCED DISCOVERY MAPS) ===
+Abre la interfaz del mapa topográfico.=地形マップのインターフェースを開きます。
+Activa/desactiva la visión nocturna (Coste Cero).=ナイトビジョンを切り替えます（負荷ゼロ）。
+Calibra la velocidad de vuelo en el aire.=空中での飛行速度を調整します。
+Calibra la velocidad de carrera en tierra.=地上での走行速度を調整します。
+Calibra la potencia y altura de salto.=ジャンプ力と高さを調整します。
+Fuerza un escaneo geológico manual.=手動で地質スキャンを強制実行します。
+Gestiona tus grupos para compartir exploración.=探索を共有するためのグループを管理します。
+Abre el menú de gestión de rastreadores.=トラッカー管理メニューを開きます。
+=== ARSENAL CLASIFICADO ====== 極秘兵器 ===
+Invoca la Varita de Excavación (Requiere permisos).=発掘の杖を呼び出します（権限が必要）。
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=注: Luantiですべての権限を有効にするには、コマンド /grant <ユーザー名> all または /grantme all を使用します

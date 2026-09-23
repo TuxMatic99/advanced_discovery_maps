@@ -1,0 +1,167 @@
+# textdomain: advanced_discovery_maps
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
+Marker Management=Управление маркерами
+Total Markers: @1=Всего маркеров: @1
+No markers found. Create markers using the map interface (/map)=Маркеры не найдены. Создайте их через интерфейс карты (/map)
+away=от вас
+Edit Name=Изменить имя
+Edit Color=Изменить цвет
+Remove Waypoint=Удалить путевую точку
+Show Waypoint=Показать путевую точку
+Delete=Удалить
+Teleport=Телепортироваться
+Add Marker by Coordinates:=Добавить маркер по координатам:
+X:=X:
+Y:=Y:
+Z:=Z:
+Name:=Имя:
+Add Marker=Добавить маркер
+Close=Закрыть
+Open Map=Открыть карту
+Delete All=Удалить всё
+Note: You need 'teleport' privilege to use teleport buttons=Примечание: Нужна привилегия 'teleport' для телепортации
+Select Color for '@1'=Выберите цвет для '@1'
+Cancel=Отмена
+Edit Marker Name=Изменить имя маркера
+Current name: @1=Текущее имя: @1
+New name:=Новое имя:
+Save=Сохранить
+Error: Please enter valid numeric coordinates for X, Y, and Z=Ошибка: Введите допустимые числовые координаты X, Y и Z
+Marker at @1,@2,@3=Маркер на @1,@2,@3
+Deleted marker '@1'=Маркер '@1' удален
+You don't have permission to teleport. Need 'teleport' privilege.=Нет прав. Нужна привилегия 'teleport'.
+Teleported to marker '@1' at @2, @3, @4=Телепортирован к маркеру '@1' на @2, @3, @4
+Waypoint set for marker '@1'=Путевая точка установлена для маркера '@1'
+Waypoint removed=Путевая точка удалена
+No active waypoint found=Активная путевая точка не найдена
+Error: Invalid marker ID=Ошибка: Неверный ID маркера
+Error: Marker name cannot be empty=Ошибка: Имя маркера не может быть пустым
+Renamed marker from '@1' to '@2'=Маркер переименован из '@1' в '@2'
+Error: Marker not found=Ошибка: Маркер не найден
+Changed color of marker '@1' from @2 to @3=Цвет маркера '@1' изменен с @2 на @3
+Open the marker management interface=Открыть интерфейс управления маркерами
+Marker GUI opened=Интерфейс маркеров открыт
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
+Red=Красный
+Blue=Синий
+Green=Зеленый
+Yellow=Желтый
+Purple=Фиолетовый
+Orange=Оранжевый
+White=Белый
+Pink=Розовый
+Discovered Map - Close with ESC=Открытая карта - Закрыть с помощью ESC
+Navigation:=Навигация:
+N ↑=С ↑
+W ←=З ←
+E →=В →
+S ↓=Ю ↓
+Center on Player=Центрировать на игроке
+Zoom: @1x=Масштаб: @1x
+Zoom Out (-)=Отдалить (-)
+Zoom In (+)=Приблизить (+)
+View Relief=Рельеф
+View Satellite=Спутник
+View Cave Map=Карта пещер
+Measurement Unit=Единица измерения
+Place Marker:=Установить маркер:
+Marker Name:=Имя маркера:
+Manage Markers=Управление маркерами
+Track Marker=Отслеживать маркер
+Closest=Ближайший
+None=Нет
+Coordinates=Координаты
+Destination=Пункт назначения
+Distance=Расстояние
+Quadrant=Квадрант
+Explored=Исследовано
+View=Обзор
+Markers=Маркеры
+Map Book=Книга карт
+Right-click to open the persistent map=ПКМ, чтобы открыть карту
+Open the persistent map=Открыть карту
+Map opened=Карта открыта
+New area discovered!=Открыта новая территория!
+Welcome! You've been given a Map Book. left-click it to explore the world!=Добро пожаловать! Вы получили Книгу карт. ЛКМ, чтобы исследовать мир!
+Show Grid (Quadrants)=Показать сетку (Квадранты)
+Hide Grid (Quadrants)=Скрыть сетку (Квадранты)
+Camera Alt=Высота камеры
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
+Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=Начало сканирования @1 квадрантов. Продолжайте играть...
+Topography updated successfully! Close and reopen the map to see the changes.=Топография обновлена! Закройте и откройте карту заново.
+Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=Максимальный радиус - 3 (49 квадрантов) во избежание перегрузки.
+No discovered quadrants in this radius to update.=Нет исследованных квадрантов для обновления в этом радиусе.
+Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=Принудительное обновление карты. Использование: /actualizar_mapa [радиус]
+Topographic Profile=Топографический профиль
+Generating profile...=Генерация профиля...
+
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=Топографический анализ
+Elevación: Máx @1m | Mín @2m=Высота: Макс @1m | Мин @2m
+Prof. Agua: @1m | Prof. Cueva: @2m=Глубина воды: @1m | Глубина пещеры: @2m
+(Avatar)=(Аватар)
+Acercar Lente (+)=Увеличить объектив (+)
+Alejar Lente (-)=Уменьшить объектив (-)
+Volver al Mapa=Вернуться к карте
+Cerrar Escáner=Закрыть сканер
+Profile X (E-W)=Профиль X (В-З)
+Profile Z (N-S)=Профиль Z (С-Ю)
+Back to Map=Вернуться к карте
+
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=>> Асинхронные раскопки завершены.
+La varita se está enfriando. Espera @1 segundos.=Палочка остывает. Подождите @1 секунд.
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=>> Начало асинхронных раскопок (Радиус @1). Спуск...
+>> Radio de excavación ajustado a @1 bloques.=>> Радиус раскопок установлен на @1 блоков.
+Calibrar Varita Tuxmatic=Калибровка палочки Tuxmatic
+Radio de Destrucción (1-100)=Радиус разрушения (1-100)
+Guardar=Сохранить
+Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=Палочка раскопок (Tuxmatic)\nЛКМ: Разрушает породу (До R=100).\nПКМ: Настроить радиус.
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=Геологический сканер заряжается для защиты памяти. Подождите @1 сек.
+Iniciando escaneo topográfico transversal...=Запуск поперечного сканирования...
+
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Открывает интерфейс телеметрической карты.\nИспользование: /map
+Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Вкл/Выкл тактическое ночное видение.\nИспользование: /nv
+Datos no inicializados.=Данные не инициализированы.
+>> Visión Nocturna: ACTIVADA=>> Ночное видение: ВКЛЮЧЕНО
+>> Visión Nocturna: DESACTIVADA=>> Ночное видение: ВЫКЛЮЧЕНО
+Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Контроль скорости полета.\nИспользование: /flyspeed <число>
+>> Velocidad de vuelo establecida a @1=>> Скорость полета установлена на @1
+Velocidad inválida. Usa un número positivo.=Неверная скорость. Используйте положительное число.
+Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=Контроль скорости бега.\nИспользование: /runspeed <число>
+>> Velocidad de carrera establecida a @1=>> Скорость бега установлена на @1
+Valor inválido. Usa un número positivo.=Неверное значение. Используйте положительное число.
+Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Контроль высоты прыжка.\nИспользование: /jumpheight <число>
+>> Altura de salto establecida a @1=>> Высота прыжка установлена на @1
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=Добавляет палочку раскопок в инвентарь.\nТребует привилегию 'give'.
+>> Arsenal desplegado: Varita de Excavación recibida.=>> Арсенал развернут: Палочка получена.
+Error: Tu inventario está lleno.=Ошибка: Ваш инвентарь полон.
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Отображает список всех тактических команд мода.
+=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== ТАКТИЧЕСКОЕ РУКОВОДСТВО (ADVANCED DISCOVERY MAPS) ===
+Abre la interfaz del mapa topográfico.=Открывает интерфейс топографической карты.
+Activa/desactiva la visión nocturna (Coste Cero).=Включает ночное видение (Без затрат).
+Calibra la velocidad de vuelo en el aire.=Калибрует скорость полета.
+Calibra la velocidad de carrera en tierra.=Калибрует скорость бега.
+Calibra la potencia y altura de salto.=Калибрует высоту прыжка.
+Fuerza un escaneo geológico manual.=Принудительное сканирование геологии.
+Gestiona tus grupos para compartir exploración.=Управление группами для обмена картой.
+Abre el menú de gestión de rastreadores.=Открыть меню управления трекерами.
+=== ARSENAL CLASIFICADO ====== ЗАСЕКРЕЧЕННЫЙ АРСЕНАЛ ===
+Invoca la Varita de Excavación (Requiere permisos).=Призывает палочку раскопок (Нужны права).
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Примечание: Чтобы активировать все привилегии в Luanti, используйте команду /grant <ваше_имя_пользователя> all или /grantme all

@@ -1,0 +1,167 @@
+# textdomain: advanced_discovery_maps
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
+Marker Management=标记管理
+Total Markers: @1=标记总数：@1
+No markers found. Create markers using the map interface (/map)=未找到标记。请使用地图界面 (/map) 创建标记
+away=距离
+Edit Name=编辑名称
+Edit Color=编辑颜色
+Remove Waypoint=移除路径点
+Show Waypoint=显示路径点
+Delete=删除
+Teleport=传送
+Add Marker by Coordinates:=通过坐标添加标记：
+X:=X:
+Y:=Y:
+Z:=Z:
+Name:=名称:
+Add Marker=添加标记
+Close=关闭
+Open Map=打开地图
+Delete All=全部删除
+Note: You need 'teleport' privilege to use teleport buttons=注意：您需要 'teleport' 权限才能进行传送
+Select Color for '@1'=为 '@1' 选择颜色
+Cancel=取消
+Edit Marker Name=编辑标记名称
+Current name: @1=当前名称: @1
+New name:=新名称:
+Save=保存
+Error: Please enter valid numeric coordinates for X, Y, and Z=错误：请输入有效的数字坐标 X、Y 和 Z
+Marker at @1,@2,@3=位于 @1,@2,@3 的标记
+Deleted marker '@1'=已删除标记 '@1'
+You don't have permission to teleport. Need 'teleport' privilege.=您没有传送权限。需要 'teleport' 权限。
+Teleported to marker '@1' at @2, @3, @4=已传送到位于 @2, @3, @4 的标记 '@1'
+Waypoint set for marker '@1'=已为标记 '@1' 设置路径点
+Waypoint removed=路径点已移除
+No active waypoint found=未找到活动路径点
+Error: Invalid marker ID=错误：无效的标记 ID
+Error: Marker name cannot be empty=错误：标记名称不能为空
+Renamed marker from '@1' to '@2'=已将标记从 '@1' 重命名为 '@2'
+Error: Marker not found=错误：未找到标记
+Changed color of marker '@1' from @2 to @3=已将标记 '@1' 的颜色从 @2 更改为 @3
+Open the marker management interface=打开标记管理界面
+Marker GUI opened=标记 GUI 已打开
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
+Red=红色
+Blue=蓝色
+Green=绿色
+Yellow=黄色
+Purple=紫色
+Orange=橙色
+White=白色
+Pink=粉色
+Discovered Map - Close with ESC=已探索地图 - 按 ESC 关闭
+Navigation:=导航：
+N ↑=北 ↑
+W ←=西 ←
+E →=东 →
+S ↓=南 ↓
+Center on Player=以玩家为中心
+Zoom: @1x=缩放: @1x
+Zoom Out (-)=缩小 (-)
+Zoom In (+)=放大 (+)
+View Relief=查看地形
+View Satellite=查看卫星图
+View Cave Map=查看洞穴地图
+Measurement Unit=测量单位
+Place Marker:=放置标记：
+Marker Name:=标记名称：
+Manage Markers=管理标记
+Track Marker=追踪标记
+Closest=最近
+None=无
+Coordinates=坐标
+Destination=目的地
+Distance=距离
+Quadrant=象限
+Explored=已探索
+View=视图
+Markers=标记
+Map Book=地图册
+Right-click to open the persistent map=右键点击以打开永久地图
+Open the persistent map=打开永久地图
+Map opened=地图已打开
+New area discovered!=发现新区域！
+Welcome! You've been given a Map Book. left-click it to explore the world!=欢迎！您获得了一本地图册。左键点击探索世界！
+Show Grid (Quadrants)=显示网格（象限）
+Hide Grid (Quadrants)=隐藏网格（象限）
+Camera Alt=摄像机高度
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
+Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=开始扫描 @1 个象限。您可以继续游玩，完成后会通知您...
+Topography updated successfully! Close and reopen the map to see the changes.=地形更新成功！请关闭并重新打开地图。
+Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=为了避免内存过载，允许的最大半径为 3（49 个象限）。
+No discovered quadrants in this radius to update.=在此半径内没有可更新的已发现象限。
+Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=强制更新地图。用法：/actualizar_mapa [半径]
+Topographic Profile=地形剖面图
+Generating profile...=正在生成剖面图...
+
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=地形分析
+Elevación: Máx @1m | Mín @2m=海拔: 最高 @1m | 最低 @2m
+Prof. Agua: @1m | Prof. Cueva: @2m=水深: @1m | 洞穴深度: @2m
+(Avatar)=(虚拟角色)
+Acercar Lente (+)=镜头放大 (+)
+Alejar Lente (-)=镜头缩小 (-)
+Volver al Mapa=返回地图
+Cerrar Escáner=关闭扫描仪
+Profile X (E-W)=剖面 X (东西)
+Profile Z (N-S)=剖面 Z (南北)
+Back to Map=返回地图
+
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=>> 异步挖掘完成。
+La varita se está enfriando. Espera @1 segundos.=魔杖正在冷却。请等待 @1 秒。
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=>> 开始异步挖掘（半径 @1）。下降中...
+>> Radio de excavación ajustado a @1 bloques.=>> 挖掘半径已调整为 @1 格。
+Calibrar Varita Tuxmatic=校准 Tuxmatic 魔杖
+Radio de Destrucción (1-100)=破坏半径 (1-100)
+Guardar=保存
+Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=挖掘魔杖 (Tuxmatic)\n左键: 破坏地形 (最大 R=100)\n右键: 配置半径
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=地质扫描仪正在重新充电以保护内存。请等待 @1 秒。
+Iniciando escaneo topográfico transversal...=正在启动横向地形扫描...
+
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=打开高级遥测地图的主界面。\n用法: /map
+Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=开启/关闭战术夜视仪。\n用法: /nv
+Datos no inicializados.=数据未初始化。
+>> Visión Nocturna: ACTIVADA=>> 夜视仪: 已开启
+>> Visión Nocturna: DESACTIVADA=>> 夜视仪: 已关闭
+Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=控制飞行速度。\n用法: /flyspeed <数字>
+>> Velocidad de vuelo establecida a @1=>> 飞行速度已设置为 @1
+Velocidad inválida. Usa un número positivo.=无效的速度。请使用正数。
+Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=控制地面奔跑速度。\n用法: /runspeed <数字>
+>> Velocidad de carrera establecida a @1=>> 奔跑速度已设置为 @1
+Valor inválido. Usa un número positivo.=无效的值。请使用正数。
+Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=控制跳跃力度。\n用法: /jumpheight <数字>
+>> Altura de salto establecida a @1=>> 跳跃高度已设置为 @1
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=将挖掘魔杖添加到您的物品栏。\n需要 'give' 权限。
+>> Arsenal desplegado: Varita de Excavación recibida.=>> 武器已部署: 获得挖掘魔杖。
+Error: Tu inventario está lleno.=错误: 您的物品栏已满。
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=显示该模组的所有战术命令和技能指南。
+=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== 战术手册 (ADVANCED DISCOVERY MAPS) ===
+Abre la interfaz del mapa topográfico.=打开地形地图界面。
+Activa/desactiva la visión nocturna (Coste Cero).=开启/关闭夜视仪（零消耗）。
+Calibra la velocidad de vuelo en el aire.=校准空中飞行速度。
+Calibra la velocidad de carrera en tierra.=校准地面奔跑速度。
+Calibra la potencia y altura de salto.=校准跳跃高度。
+Fuerza un escaneo geológico manual.=强制进行手动地质扫描。
+Gestiona tus grupos para compartir exploración.=管理您的群组以共享探索。
+Abre el menú de gestión de rastreadores.=打开追踪器管理菜单。
+=== ARSENAL CLASIFICADO ====== 机密武器库 ===
+Invoca la Varita de Excavación (Requiere permisos).=召唤挖掘魔杖（需要权限）。
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=注意：要在 Luanti 中激活所有权限，请使用命令 /grant <你的用户名> all 或 /grantme all

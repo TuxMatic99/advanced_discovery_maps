@@ -20,7 +20,7 @@ local function load_map_parties()
         map_parties = minetest.deserialize(data) or {}
     end
     
-    -- Rebuild player_parties lookup table
+    -- Rebuild player_parties lookup tablemap-party.lua
     player_parties = {}
     for party_name, party_data in pairs(map_parties) do
         for _, player_name in ipairs(party_data.members) do
@@ -125,34 +125,31 @@ local function tile_exists(tile_id)
     return false
 end
 
--- Share a tile with all party members (only after tile is generated)
+-- Share a tile with all party members (Seguridad de Recursión Añadida)
 local function share_tile_with_party(sender_name, tile_x, tile_z, callback)
     local party_name = get_player_party(sender_name)
-    if not party_name then
-        return false, "You are not in a party"
-    end
+    if not party_name then return false, "You are not in a party" end
     
     local party = map_parties[party_name]
-    if not party then
-        return false, "Party data not found"
-    end
+    if not party then return false, "Party data not found" end
     
-    -- Check if sender has discovered this tile
     local sender_data = persistent_map.get_player_data(sender_name)
-    if not sender_data then
-        return false, "Sender data not found"
-    end
+    if not sender_data then return false, "Sender data not found" end
     
     local tile_id = string.format("tile_%d_%d", tile_x, tile_z)
-    if not sender_data.discovered_tiles[tile_id] then
-        return false, "Tile not discovered by sender"
-    end
+    if not sender_data.discovered_tiles[tile_id] then return false, "Tile not discovered by sender" end
     
-    -- Wait for tile to be generated before sharing
-    local function attempt_share()
+    -- Algoritmo de reintento con límite de seguridad (Abortar tras 20 intentos = 10 segundos)
+    local function attempt_share(intentos)
+        intentos = intentos or 0
+        
         if not tile_exists(tile_id) then
-            -- Tile doesn't exist yet, wait a bit longer
-            minetest.after(0.5, attempt_share)
+            if intentos > 20 then
+                minetest.log("warning", "[map-party] Abortando sincronización de " .. tile_id .. " por tiempo de espera agotado.")
+                return -- Corta la recursión y libera el procesador
+            end
+            -- Si no existe aún, reintentar sumando 1 al contador
+            minetest.after(0.5, function() attempt_share(intentos + 1) end)
             return
         end
         
@@ -165,54 +162,39 @@ local function share_tile_with_party(sender_name, tile_x, tile_z, callback)
         local shared_count = 0
         local map_path = persistent_map.map_path
         
-        -- Share with all party members except the sender
+        -- (El resto del código de esta función se mantiene igual, iterando sobre los miembros de la party)
         for _, member_name in ipairs(party.members) do
             if member_name ~= sender_name then
-                -- Load member's data (works for offline players too)
                 local member_data = storage:get_string("player_" .. member_name)
                 local member_tiles = {}
+                if member_data ~= "" then member_tiles = minetest.deserialize(member_data) or {} end
                 
-                if member_data ~= "" then
-                    member_tiles = minetest.deserialize(member_data) or {}
-                end
-                
-                -- Check if member already has this tile
                 if not member_tiles[tile_id] then
-                    -- Add tile to member's discovered tiles
                     member_tiles[tile_id] = {x = tile_x, z = tile_z}
                     storage:set_string("player_" .. member_name, minetest.serialize(member_tiles))
                     shared_count = shared_count + 1
                     
-                    -- If member is online, update their runtime data and send the tile
                     local member_player = minetest.get_player_by_name(member_name)
                     if member_player then
                         local member_player_data = persistent_map.get_player_data(member_name)
                         if member_player_data then
                             member_player_data.discovered_tiles[tile_id] = {x = tile_x, z = tile_z}
                         end
-                        
-                        -- Send the tile texture to the member with a small delay
                         minetest.after(0.1, function()
                             local filename = map_path .. tile_id .. ".png"
-                            minetest.dynamic_add_media({
-                                filepath = filename,
-                                to_player = member_name,
-                            }, function(player_name)
-                                minetest.chat_send_player(member_name,
-                                    S("Party member @1 discovered a new area at (@2, @3)!", sender_name, tile_x, tile_z))
+                            minetest.dynamic_add_media({filepath = filename, to_player = member_name}, function(player_name)
+                                minetest.chat_send_player(member_name, S("Party member @1 discovered a new area at (@2, @3)!", sender_name, tile_x, tile_z))
                             end)
                         end)
                     end
                 end
             end
         end
-        
         if callback then callback(true, shared_count) end
     end
     
-    -- Start the sharing process with initial delay
-    minetest.after(0.2, attempt_share)
-    return true, 0 -- Return immediately, actual sharing happens asynchronously
+    minetest.after(0.2, function() attempt_share(0) end)
+    return true, 0
 end
 
 -- Hook into the tile discovery system to automatically share with party members
@@ -262,48 +244,66 @@ function persistent_map.get_party_member_positions(player_name)
     return member_positions
 end
 
--- Monitor player movement and auto-share newly discovered tiles
+-- Monitor player movement and auto-share newly discovered tiles (Optimizacion de Recolector de Basura)
 local party_scan_timer = 0
 minetest.register_globalstep(function(dtime)
     party_scan_timer = party_scan_timer + dtime
     if party_scan_timer < persistent_map.scan_interval then return end
     party_scan_timer = 0
     
-    for _, player in ipairs(minetest.get_connected_players()) do
+    -- Localizando funciones en el ámbito (scope) para acelerar la lectura en milisegundos
+    local get_connected = minetest.get_connected_players
+    local get_party = get_player_party
+    local get_data = persistent_map.get_player_data
+    
+    for _, player in ipairs(get_connected()) do
         local name = player:get_player_name()
-        local party_name = get_player_party(name)
+        local party_name = get_party(name)
         
-        -- Only process players who are in parties
         if party_name then
-            local player_data = persistent_map.get_player_data(name)
+            local player_data = get_data(name)
             if player_data then
                 local pos = player:get_pos()
                 local tile_x, tile_z = pos_to_tile_coords(pos)
-                local tile_id = string.format("tile_%d_%d", tile_x, tile_z)
                 
-                -- Check if this is a newly discovered tile
-                if player_data.discovered_tiles[tile_id] and
-                   (not player_data.last_shared_tile or
-                    player_data.last_shared_tile ~= tile_id) then
+                -- EVITAMOS concatenar strings a menos que las coordenadas numéricas cambien
+                if player_data.last_shared_x ~= tile_x or player_data.last_shared_z ~= tile_z then
+                    local tile_id = "tile_" .. tile_x .. "_" .. tile_z
                     
-                    -- Share this tile with party members (asynchronously)
-                    share_tile_with_party(name, tile_x, tile_z, function(success, shared_count)
-                        if success and shared_count > 0 then
-                            player_data.last_shared_tile = tile_id
-                        end
-                    end)
+                    if player_data.discovered_tiles[tile_id] then
+                        -- Actualizamos el caché numérico inmediatamente
+                        player_data.last_shared_x = tile_x
+                        player_data.last_shared_z = tile_z
+                        
+                        share_tile_with_party(name, tile_x, tile_z, function(success, shared_count)
+                            if success and shared_count > 0 then
+                                player_data.last_shared_tile = tile_id
+                            end
+                        end)
+                    end
                 end
             end
         end
     end
 end)
-
+-- Chat command to create a new map party
 -- Chat command to create a new map party
 minetest.register_chatcommand("mapparty", {
-    params = "create <party_name> [player1] [player2] [player3] ... | add <party_name> <player> | remove <party_name> <player> | delete <party_name> | list | info [party_name] | leave",
-    description = S("Manage map parties for automatic tile sharing"),
+    params = "<acción> [argumentos]",
+    description = S("Sistema Telemétrico de Mapeo en Grupo.\n") ..
+                  S("Permite compartir el mapa de forma automática con aliados.\n") ..
+                  S("---------- COMANDOS DISPONIBLES ----------\n") ..
+                  S("/mapparty create <nombre_party> [jugador1]... - Crea un grupo.\n") ..
+                  S("/mapparty add <party> <jugador> - Añade a un aliado.\n") ..
+                  S("/mapparty remove <party> <jugador> - Expulsa a un miembro.\n") ..
+                  S("/mapparty leave - Abandona tu grupo actual.\n") ..
+                  S("/mapparty list - Muestra todos los grupos creados.\n") ..
+                  S("/mapparty info [party] - Detalles de un grupo específico.\n") ..
+                  S("/mapparty delete <party> - Elimina el grupo (solo el dueño)."),
+    
     func = function(name, param)
         local parts = param:split(" ")
+-- ... (el resto de tu lógica para analizar 'parts' se mantiene intacto)
         if #parts == 0 or parts[1] == "" then
             return false, S("Usage: /mapparty <create|add|remove|delete|list|info|leave> [arguments]")
         end

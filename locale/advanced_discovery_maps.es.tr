@@ -1,4 +1,8 @@
 # textdomain: advanced_discovery_maps
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
 Marker Management=Gestión de Marcadores
 Total Markers: @1=Marcadores Totales: @1
 No markers found. Create markers using the map interface (/map)=No se encontraron marcadores. Créalos usando la interfaz del mapa (/map)
@@ -40,6 +44,10 @@ Error: Marker not found=Error: Marcador no encontrado
 Changed color of marker '@1' from @2 to @3=Color del marcador '@1' cambiado de @2 a @3
 Open the marker management interface=Abre la interfaz de gestión de marcadores
 Marker GUI opened=Interfaz de marcadores abierta
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
 Red=Rojo
 Blue=Azul
 Green=Verde
@@ -60,6 +68,7 @@ Zoom Out (-)=Alejar (-)
 Zoom In (+)=Acercar (+)
 View Relief=Ver Relieve
 View Satellite=Ver Satélite
+View Cave Map=Ver Mapa de Cuevas
 Measurement Unit=Unidad de Medida
 Place Marker:=Colocar Marcador:
 Marker Name:=Nombre del Marcador:
@@ -80,28 +89,79 @@ Open the persistent map=Abre el mapa persistente
 Map opened=Mapa abierto
 New area discovered!=¡Nueva área descubierta!
 Welcome! You've been given a Map Book. left-click it to explore the world!=¡Bienvenido! Has recibido un Libro de Mapas. ¡Haz clic izquierdo para explorar el mundo!
+Show Grid (Quadrants)=Mostrar Cuadrícula (Cuadrantes)
+Hide Grid (Quadrants)=Ocultar Cuadrícula (Cuadrantes)
+Camera Alt=Altitud de Cámara
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
 Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=Iniciando escaneo topográfico de @1 cuadrante(s). Puedes seguir jugando, te avisaré al terminar...
 Topography updated successfully! Close and reopen the map to see the changes.=¡Topografía actualizada con éxito! Cierra y abre el mapa para ver los cambios de toda el área.
 Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=El radio máximo permitido es 3 (49 cuadrantes) para evitar sobrecargar la memoria.
 No discovered quadrants in this radius to update.=No hay cuadrantes descubiertos en este radio para actualizar.
 Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=Fuerza la actualización del mapa. Uso: /actualizar_mapa [radio]. (Ej: /actualizar_mapa 1 actualiza 3x3 cuadrantes)
-Elevation: Max @1m | Min @2m | Δ @3m=Elevación: Máx @1m | Mín @2m | Δ @3m
-Max Water Depth: @1m | Max Cave Drop: @2m=Profundidad Máx. Agua: @1m | Caída Máx. Cueva: @2m
-(Player)=(Jugador)
-View Cave Map=Ver Mapa de Cuevas
-Topographic Analysis=Análisis Topográfico
-Profile X (E-W)=Perfil X (E-O)
-Profile Z (N-S)=Perfil Z (N-S)
 Topographic Profile=Perfil Topográfico
 Generating profile...=Generando perfil...
 
-Show Grid (Quadrants)=Mostrar Cuadrícula (Cuadrantes)
-Hide Grid (Quadrants)=Ocultar Cuadrícula (Cuadrantes)
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=Análisis Topográfico
+Elevación: Máx @1m | Mín @2m=Elevación: Máx @1m | Mín @2m
+Prof. Agua: @1m | Prof. Cueva: @2m=Prof. Agua: @1m | Prof. Cueva: @2m
+(Avatar)=(Avatar)
+Acercar Lente (+)=Acercar Lente (+)
+Alejar Lente (-)=Alejar Lente (-)
+Volver al Mapa=Volver al Mapa
+Cerrar Escáner=Cerrar Escáner
+Profile X (E-W)=Perfil X (E-O)
+Profile Z (N-S)=Perfil Z (N-S)
 Back to Map=Volver al Mapa
 
-Camera Alt=Altitud de Cámara
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=>> Excavación Asíncrona completada.
+La varita se está enfriando. Espera @1 segundos.=La varita se está enfriando. Espera @1 segundos.
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...
+>> Radio de excavación ajustado a @1 bloques.=>> Radio de excavación ajustado a @1 bloques.
+Calibrar Varita Tuxmatic=Calibrar Varita Tuxmatic
+Radio de Destrucción (1-100)=Radio de Destrucción (1-100)
+Guardar=Guardar
+Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.
+Iniciando escaneo topográfico transversal...=Iniciando escaneo topográfico transversal...
 
-Camera Alt=Altitud de Cámara
-Show Grid (Quadrants)=Mostrar Cuadrícula (Cuadrantes)
-Hide Grid (Quadrants)=Ocultar Cuadrícula (Cuadrantes)
-Back to Map=Volver al Mapa
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.
+Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.
+Datos no inicializados.=Datos no inicializados.
+>> Visión Nocturna: ACTIVADA=>> Visión Nocturna: ACTIVADA
+>> Visión Nocturna: DESACTIVADA=>> Visión Nocturna: DESACTIVADA
+Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.
+>> Velocidad de vuelo establecida a @1=>> Velocidad de vuelo establecida a @1
+Velocidad inválida. Usa un número positivo.=Velocidad inválida. Usa un número positivo.
+Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)
+>> Velocidad de carrera establecida a @1=>> Velocidad de carrera establecida a @1
+Valor inválido. Usa un número positivo.=Valor inválido. Usa un número positivo.
+Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)
+>> Altura de salto establecida a @1=>> Altura de salto establecida a @1
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.
+>> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal desplegado: Varita de Excavación recibida.
+Error: Tu inventario está lleno.=Error: Tu inventario está lleno.
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Muestra el directorio de todos los comandos y habilidades tácticas del mod.
+=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ===
+Abre la interfaz del mapa topográfico.=Abre la interfaz del mapa topográfico.
+Activa/desactiva la visión nocturna (Coste Cero).=Activa/desactiva la visión nocturna (Coste Cero).
+Calibra la velocidad de vuelo en el aire.=Calibra la velocidad de vuelo en el aire.
+Calibra la velocidad de carrera en tierra.=Calibra la velocidad de carrera en tierra.
+Calibra la potencia y altura de salto.=Calibra la potencia y altura de salto.
+Fuerza un escaneo geológico manual.=Fuerza un escaneo geológico manual.
+Gestiona tus grupos para compartir exploración.=Gestiona tus grupos para compartir exploración.
+Abre el menú de gestión de rastreadores.=Abre el menú de gestión de rastreadores.
+=== ARSENAL CLASIFICADO ====== ARSENAL CLASIFICADO ===
+Invoca la Varita de Excavación (Requiere permisos).=Invoca la Varita de Excavación (Requiere permisos).
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all

@@ -1,0 +1,167 @@
+# textdomain: advanced_discovery_maps
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
+Marker Management=마커 관리
+Total Markers: @1=총 마커: @1
+No markers found. Create markers using the map interface (/map)=마커가 없습니다. 지도 인터페이스(/map)를 사용하여 생성하세요.
+away=거리
+Edit Name=이름 편집
+Edit Color=색상 편집
+Remove Waypoint=웨이포인트 제거
+Show Waypoint=웨이포인트 표시
+Delete=삭제
+Teleport=순간이동
+Add Marker by Coordinates:=좌표로 마커 추가:
+X:=X:
+Y:=Y:
+Z:=Z:
+Name:=이름:
+Add Marker=마커 추가
+Close=닫기
+Open Map=지도 열기
+Delete All=모두 삭제
+Note: You need 'teleport' privilege to use teleport buttons=참고: 순간이동하려면 'teleport' 권한이 필요합니다
+Select Color for '@1'='@1'의 색상 선택
+Cancel=취소
+Edit Marker Name=마커 이름 편집
+Current name: @1=현재 이름: @1
+New name:=새 이름:
+Save=저장
+Error: Please enter valid numeric coordinates for X, Y, and Z=오류: X, Y, Z에 올바른 숫자 좌표를 입력하세요
+Marker at @1,@2,@3=@1,@2,@3의 마커
+Deleted marker '@1'=마커 '@1'을(를) 삭제했습니다
+You don't have permission to teleport. Need 'teleport' privilege.=권한이 없습니다. 'teleport' 권한이 필요합니다.
+Teleported to marker '@1' at @2, @3, @4=@2, @3, @4의 마커 '@1'(으)로 순간이동했습니다
+Waypoint set for marker '@1'=마커 '@1'의 웨이포인트를 설정했습니다
+Waypoint removed=웨이포인트 제거됨
+No active waypoint found=활성 웨이포인트를 찾을 수 없습니다
+Error: Invalid marker ID=오류: 잘못된 마커 ID입니다
+Error: Marker name cannot be empty=오류: 마커 이름은 비워둘 수 없습니다
+Renamed marker from '@1' to '@2'=마커 이름이 '@1'에서 '@2'(으)로 변경되었습니다
+Error: Marker not found=오류: 마커를 찾을 수 없습니다
+Changed color of marker '@1' from @2 to @3=마커 '@1'의 색상을 @2에서 @3(으)로 변경했습니다
+Open the marker management interface=마커 관리 인터페이스 열기
+Marker GUI opened=마커 GUI가 열렸습니다
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
+Red=빨간색
+Blue=파란색
+Green=초록색
+Yellow=노란색
+Purple=보라색
+Orange=주황색
+White=흰색
+Pink=분홍색
+Discovered Map - Close with ESC=발견된 지도 - ESC로 닫기
+Navigation:=탐색:
+N ↑=북 ↑
+W ←=서 ←
+E →=동 →
+S ↓=남 ↓
+Center on Player=플레이어 중앙 맞춤
+Zoom: @1x=확대: @1x
+Zoom Out (-)=축소 (-)
+Zoom In (+)=확대 (+)
+View Relief=지형 보기
+View Satellite=위성 보기
+View Cave Map=동굴 지도 보기
+Measurement Unit=측정 단위
+Place Marker:=마커 배치:
+Marker Name:=마커 이름:
+Manage Markers=마커 관리
+Track Marker=마커 추적
+Closest=가장 가까운
+None=없음
+Coordinates=좌표
+Destination=목적지
+Distance=거리
+Quadrant=사분면
+Explored=탐색됨
+View=보기
+Markers=마커
+Map Book=지도 책
+Right-click to open the persistent map=우클릭하여 영구 지도를 엽니다
+Open the persistent map=영구 지도 열기
+Map opened=지도가 열렸습니다
+New area discovered!=새로운 지역을 발견했습니다!
+Welcome! You've been given a Map Book. left-click it to explore the world!=환영합니다! 지도 책을 받았습니다. 좌클릭하여 세계를 탐험하세요!
+Show Grid (Quadrants)=그리드 표시(사분면)
+Hide Grid (Quadrants)=그리드 숨기기(사분면)
+Camera Alt=카메라 고도
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
+Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=@1개의 사분면 지형 스캔을 시작합니다. 계속 플레이하세요...
+Topography updated successfully! Close and reopen the map to see the changes.=지형이 성공적으로 업데이트되었습니다! 지도를 닫았다 다시 여세요.
+Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=메모리 과부하를 방지하기 위해 최대 허용 반경은 3(49 사분면)입니다.
+No discovered quadrants in this radius to update.=이 반경 내에 업데이트할 발견된 사분면이 없습니다.
+Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=지도를 강제로 업데이트합니다. 사용법: /actualizar_mapa [반경]
+Topographic Profile=지형 프로필
+Generating profile...=프로필 생성 중...
+
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=지형 분석
+Elevación: Máx @1m | Mín @2m=고도: 최대 @1m | 최소 @2m
+Prof. Agua: @1m | Prof. Cueva: @2m=수심: @1m | 동굴 깊이: @2m
+(Avatar)=(아바타)
+Acercar Lente (+)=렌즈 확대 (+)
+Alejar Lente (-)=렌즈 축소 (-)
+Volver al Mapa=지도로 돌아가기
+Cerrar Escáner=스캐너 닫기
+Profile X (E-W)=프로필 X (동-서)
+Profile Z (N-S)=프로필 Z (북-남)
+Back to Map=지도로 돌아가기
+
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=>> 비동기 발굴 완료.
+La varita se está enfriando. Espera @1 segundos.=지팡이가 냉각 중입니다. @1초 기다리십시오.
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=>> 비동기 발굴 시작 (반경 @1). 하강 중...
+>> Radio de excavación ajustado a @1 bloques.=>> 발굴 반경이 @1 블록으로 설정되었습니다.
+Calibrar Varita Tuxmatic=Tuxmatic 지팡이 조정
+Radio de Destrucción (1-100)=파괴 반경 (1-100)
+Guardar=저장
+Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=발굴 지팡이 (Tuxmatic)\n좌클릭: 지형 파괴 (최대 R=100).\n우클릭: 반경 구성.
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=메모리 보호를 위해 지질 스캐너가 재충전 중입니다. @1초 대기.
+Iniciando escaneo topográfico transversal...=횡단 지형 스캔 시작...
+
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=고급 원격 측정 지도 인터페이스를 엽니다.\n사용법: /map
+Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=전술 야간 투시경 토글.\n사용법: /nv
+Datos no inicializados.=데이터가 초기화되지 않았습니다.
+>> Visión Nocturna: ACTIVADA=>> 야간 투시경: 켜짐
+>> Visión Nocturna: DESACTIVADA=>> 야간 투시경: 꺼짐
+Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=비행 속도를 제어합니다.\n사용법: /flyspeed <숫자>
+>> Velocidad de vuelo establecida a @1=>> 비행 속도가 @1(으)로 설정됨
+Velocidad inválida. Usa un número positivo.=잘못된 속도입니다. 양수를 사용하세요.
+Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=지상 달리기 속도를 제어합니다.\n사용법: /runspeed <숫자>
+>> Velocidad de carrera establecida a @1=>> 달리기 속도가 @1(으)로 설정됨
+Valor inválido. Usa un número positivo.=잘못된 값입니다. 양수를 사용하세요.
+Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=점프력을 제어합니다.\n사용법: /jumpheight <숫자>
+>> Altura de salto establecida a @1=>> 점프 높이가 @1(으)로 설정됨
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=인벤토리에 발굴 지팡이를 추가합니다.\n'give' 권한이 필요합니다.
+>> Arsenal desplegado: Varita de Excavación recibida.=>> 무기 배치: 발굴 지팡이 획득.
+Error: Tu inventario está lleno.=오류: 인벤토리가 꽉 찼습니다.
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=모든 전술 명령 및 스킬을 표시합니다.
+=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== 전술 메뉴얼 (ADVANCED DISCOVERY MAPS) ===
+Abre la interfaz del mapa topográfico.=지형 지도 인터페이스 열기.
+Activa/desactiva la visión nocturna (Coste Cero).=야간 투시경 켜기/끄기 (비용 없음).
+Calibra la velocidad de vuelo en el aire.=공중 비행 속도 조정.
+Calibra la velocidad de carrera en tierra.=지상 달리기 속도 조정.
+Calibra la potencia y altura de salto.=점프 높이 조정.
+Fuerza un escaneo geológico manual.=수동 지질 스캔 강제 실행.
+Gestiona tus grupos para compartir exploración.=탐색 공유를 위한 그룹 관리.
+Abre el menú de gestión de rastreadores.=트래커 관리 메뉴 열기.
+=== ARSENAL CLASIFICADO ====== 기밀 무기 ===
+Invoca la Varita de Excavación (Requiere permisos).=발굴 지팡이 소환 (권한 필요).
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=참고: Luanti에서 모든 권한을 활성화하려면 /grant <사용자_이름> all 또는 /grantme all 명령을 사용하세요

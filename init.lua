@@ -58,6 +58,47 @@ persistent_map.ui = {
 	padding_multiplier = 2,
 }
 
+-- =========================================================
+-- NODOS DE VISIÓN NOCTURNA (Emisores de Fotones de Coste Cero)
+-- =========================================================
+
+-- 1. Faro para zonas secas (Cuevas y Superficie)
+minetest.register_node("advanced_discovery_maps:nv_beacon", {
+    description = "NV Beacon (Air)",
+    drawtype = "airlike",
+    paramtype = "light",
+    sunlight_propagates = true,
+    light_source = 14,
+    walkable = false,
+    pointable = false,
+    diggable = false,
+    buildable_to = true,
+    drop = "",
+    groups = {not_in_creative_inventory = 1},
+})
+
+-- 2. Faro para zonas sumergidas (Mantiene las físicas de nado sin generar flujo)
+minetest.register_node("advanced_discovery_maps:nv_beacon_liquid", {
+    description = "NV Beacon (Liquid)",
+    drawtype = "airlike",
+    paramtype = "light",
+    sunlight_propagates = true,
+    light_source = 14,
+    walkable = false,
+    pointable = false,
+    diggable = false,
+    buildable_to = true,
+    drop = "",
+    liquidtype = "source",
+    liquid_alternative_flowing = "advanced_discovery_maps:nv_beacon_liquid",
+    liquid_alternative_source = "advanced_discovery_maps:nv_beacon_liquid",
+    liquid_viscosity = 1,
+    liquid_renewable = false,
+    liquid_range = 0, -- ESTO ES CRÍTICO: Previene el colapso del CPU por cálculos de fluidos
+    post_effect_color = {a = 64, r = 17, g = 47, b = 100}, -- Tinte azulado bajo el agua
+    groups = {not_in_creative_inventory = 1},
+})
+
 persistent_map.player_marker = {
 	arrow_size = 0.25,
 	arrow_height = 0.35,
@@ -155,6 +196,14 @@ persistent_map.player_map_mode = {}
 persistent_map.player_show_grid = {} 
 persistent_map.player_units = {} 
 persistent_map.active_target = {} 
+
+-- =========================================================
+-- VARIABLES DE CONTENCIÓN (ESCUDOS TERMODINÁMICOS)
+-- =========================================================
+local cooldowns_mapa = {}
+local cooldowns_perfil = {}
+local TIEMPO_ENFRIAMIENTO_MAPA = 15    -- Segundos entre comandos de actualización masiva
+local TIEMPO_ENFRIAMIENTO_PERFIL = 8   -- Segundos entre lecturas transversales de VoxelManip
 
 local function convertir_distancia(bloques, unidad)
     if unidad == "Centimetros" then return (bloques * 100), "cm"
@@ -766,8 +815,15 @@ function persistent_map.generate_profile(player_name, axis, fixed_coord)
                     local n_color = color_cache[cid]
                     r, g, b = n_color[1], n_color[2], n_color[3]
 
+                    -- ALGORITMO TUXMATIC: Espectrómetro Mineral 2D (Coste Cero)
+                    local node_name = minetest.get_name_from_content_id(cid)
+                    if string.find(node_name, "ore") or string.find(node_name, "diamond") or string.find(node_name, "gold") or string.find(node_name, "copper") then
+                        r, g, b = 0, 255, 255 -- Cian fluorescente para metales/gemas
+                    elseif string.find(node_name, "coal") then
+                        r, g, b = 255, 0, 255 -- Magenta fluorescente para carbón
+                    end
+
                     if is_liquid_cache[cid] == nil then
-                        local node_name = minetest.get_name_from_content_id(cid)
                         local def = minetest.registered_nodes[node_name]
                         is_liquid_cache[cid] = def and (def.drawtype == "liquid" or def.drawtype == "flowingliquid" or (def.groups and (def.groups.water or def.groups.lava))) or false
                     end
@@ -852,28 +908,118 @@ function persistent_map.generate_profile(player_name, axis, fixed_coord)
         filepath = filename_full,
         to_player = player_name,
     }, function(pname)
-        local formspec = {
-            "formspec_version[6]",
-            "size[16,11.5]",
-            "bgcolor[#000000FF;true]",
-            "label[0.5,0.5;" .. S("Topographic Profile") .. " (" .. string.upper(axis) .. ")]",
-            
-            "label[0.5,1.0;" .. S("Elevation: Max @1m | Min @2m | Δ @3m", max_elevation, min_elevation, max_elevation - min_elevation) .. "]",
-            "label[8.0,1.0;" .. S("Max Water Depth: @1m | Max Cave Drop: @2m", max_water_depth, max_cave_depth) .. "]",
-
-            "label[0.1, 2.0;" .. (base_y + height_up) .. "m]",
-            "label[0.1, 4.33;" .. base_y .. "m " .. S("(Player)") .. "]",
-            "label[0.1, 9.0;" .. (base_y - height_down) .. "m]",
-
-            "scroll_container[2.5,2.0;13,7.0;profile_scroll;horizontal;0]",
-            "image[0,0;14,7.0;" .. filename_base .. "]",
-            "scroll_container_end[]",
-            
-            "button[2.5,10.0;4,1;back_to_map;" .. S("Back to Map") .. "]",
-            "button[6.7,10.0;4,1;close_profile;" .. S("Close") .. "]",
-        }
-        minetest.show_formspec(pname, "persistent_map:profile", table.concat(formspec))
+        -- Guardamos la metadata del perfil en RAM para escalado asíncrono
+        local p_data = persistent_map.get_player_data(pname)
+        if p_data then
+            p_data.profile_view = {
+                file = filename_base,
+                axis = axis,
+                max_e = max_elevation,
+                min_e = min_elevation,
+                max_w = max_water_depth,
+                max_c = max_cave_depth,
+                base_y = base_y,
+                h_up = height_up,
+                h_down = height_down,
+                zoom = 1.0 -- Escala original
+            }
+            persistent_map.show_profile_gui(pname)
+        end
     end)
+end
+
+-- =========================================================
+-- MOTOR ÓPTICO: INTERFAZ DE NAVEGACIÓN Y ZOOM 2D (TUXMATIC)
+-- =========================================================
+function persistent_map.show_profile_gui(player_name)
+    local data = persistent_map.get_player_data(player_name)
+    if not data or not data.profile_view then return end
+    
+    local p = data.profile_view
+    local z = p.zoom
+    
+    -- Delegamos la ampliación visual a la GPU
+    local img_w = 14.0 * z
+    local img_h = 7.0 * z
+    
+    -- Corrección Matemática: Normalización exacta sobre 1000 puntos para evitar zonas grises
+    local factor_x = math.max(0, (img_w - 13.0) / 1000)
+    local factor_y = math.max(0, (img_h - 7.0) / 1000)
+    
+    local formspec = {
+        "formspec_version[6]",
+        "size[16,11.5]",
+        "bgcolor[#000000FF;true]",
+        "label[0.5,0.5;" .. S("Análisis Topográfico") .. " (" .. string.upper(p.axis) .. ") - Escala: " .. math.floor(z * 100) .. "%]",
+        
+        "label[0.5,1.0;" .. S("Elevación: Máx @1m | Mín @2m", p.max_e, p.min_e) .. "]",
+        "label[8.0,1.0;" .. S("Prof. Agua: @1m | Prof. Cueva: @2m", p.max_w, p.max_c) .. "]",
+
+        -- Barras de desplazamiento perimetrales nativas
+        "scrollbar[2.5,9.1;13,0.4;horizontal;prof_scroll_x;0]",
+        "scrollbar[15.6,2.0;0.4,7.0;vertical;prof_scroll_y;0]",
+
+        -- 1. Contenedor Vertical (Mueve la imagen y la escala Y juntas hacia arriba/abajo)
+        "scroll_container[2.5,2.0;13,7.0;prof_scroll_y;vertical;" .. factor_y .. "]",
+            
+            -- 2. Contenedor Horizontal (Aislado: Mueve solo la imagen y la escala X de lado a lado)
+            "scroll_container[0,0;13," .. img_h .. ";prof_scroll_x;horizontal;" .. factor_x .. "]",
+                "image[0,0;" .. img_w .. "," .. img_h .. ";" .. p.file .. "]",
+    }
+
+    -- Generación Dinámica del Eje X (Distancia Longitudinal)
+    -- El corte transversal tiene siempre 384 bloques. El jugador es el punto 0.
+    local total_x_meters = 384
+    local f_scale_x = img_w / total_x_meters
+    local step_x = 64
+    if z >= 2.0 then step_x = 32 end
+    if z >= 4.0 then step_x = 16 end
+
+    for x_val = -192, 192, step_x do
+        local gui_x = (x_val + 192) * f_scale_x
+        -- Retícula vertical translúcida
+        table.insert(formspec, string.format("box[%.2f,0;0.02,%.2f;#FFFFFF30]", gui_x, img_h))
+        
+        local color_x = (x_val == 0) and "#FF3030" or "#AAAAAA"
+        local label_x = (x_val == 0) and "0m" or (x_val .. "m")
+        table.insert(formspec, string.format("style_type[label;textcolor=%s]", color_x))
+        table.insert(formspec, string.format("label[%.2f,%.2f;%s]", gui_x + 0.1, img_h - 0.4, label_x))
+        table.insert(formspec, "style_type[label;textcolor=#FFFFFF]")
+    end
+    table.insert(formspec, "scroll_container_end[]") -- Cierra el contenedor X
+
+    -- Generación Dinámica del Eje Y (Elevación)
+    -- Anclado visualmente a la izquierda (Fuera del contenedor X, pero dentro del Y)
+    local total_y_meters = p.h_up + p.h_down
+    local f_scale_y = img_h / total_y_meters
+    local step_y = 50
+    if z >= 2.0 then step_y = 25 end
+    if z >= 4.0 then step_y = 10 end
+    
+    for y_val = math.floor((p.base_y - p.h_down)/step_y)*step_y, p.base_y + p.h_up, step_y do
+        local diff = (p.base_y + p.h_up) - y_val
+        if diff >= 0 and diff <= total_y_meters then
+            local gui_y = diff * f_scale_y
+            -- Retícula horizontal translúcida a lo largo de toda la ventana
+            table.insert(formspec, string.format("box[0,%.2f;13,0.02;#FFFFFF40]", gui_y))
+            
+            local color_y = (y_val == p.base_y) and "#00FF88" or "#FFFFFF"
+            local label_y = (y_val == p.base_y) and (y_val .. "m (Avatar)") or (y_val .. "m")
+            
+            table.insert(formspec, string.format("style_type[label;textcolor=%s]", color_y))
+            table.insert(formspec, string.format("label[0.1,%.2f;%s]", gui_y, label_y))
+            table.insert(formspec, "style_type[label;textcolor=#FFFFFF]")
+        end
+    end
+    table.insert(formspec, "scroll_container_end[]") -- Cierra el contenedor Y
+        
+    -- Botones de acción fijos en la base
+    table.insert(formspec, "button[2.5,10.0;3,1;prof_zoom_in;" .. S("Acercar Lente (+)") .. "]")
+    table.insert(formspec, "button[5.7,10.0;3,1;prof_zoom_out;" .. S("Alejar Lente (-)") .. "]")
+    table.insert(formspec, "button[8.9,10.0;3,1;back_to_map;" .. S("Volver al Mapa") .. "]")
+    table.insert(formspec, "button[12.1,10.0;3,1;close_profile;" .. S("Cerrar Escáner") .. "]")
+
+    minetest.show_formspec(player_name, "persistent_map:profile", table.concat(formspec))
 end
 
 function persistent_map.show_map(player_name)
@@ -1173,12 +1319,13 @@ function persistent_map.show_map(player_name)
 			local final_scale = base_scale * zoom_response * dampening
 
 			-- =====================================================
-			-- TAMAÑOS GEOMÉTRICOS (Masa visual compacta)
+			-- TAMAÑOS GEOMÉTRICOS (Refinación de Núcleo Doble)
 			-- =====================================================
-			local main_size = math.max(0.18, final_scale * 0.22)
-			local tip_size  = math.max(0.12, final_scale * 0.16)
-			local mid_size  = math.max(0.10, final_scale * 0.13)
-			local wing_size = math.max(0.08, final_scale * 0.11)
+			-- Se estilizan las proporciones para un aspecto más afilado y preciso
+			local main_size = math.max(0.18, final_scale * 0.20)
+			local tip_size  = math.max(0.10, final_scale * 0.12) -- Punta más fina
+			local mid_size  = math.max(0.06, final_scale * 0.08) -- Núcleo central reducido
+			local wing_size = math.max(0.08, final_scale * 0.10)
 
 			local half_main = main_size * 0.5
 			local half_tip  = tip_size * 0.5
@@ -1190,72 +1337,97 @@ function persistent_map.show_map(player_name)
 			local sin_a = math.sin(p_yaw)
 
 			-- =====================================================
-			-- DISTANCIAS COMPACTADAS (Prevención de ruido perceptual)
+			-- DISTANCIAS COMPACTADAS (Vectores Agudizados)
 			-- =====================================================
-			local front_dist = final_scale * 0.82
-			local mid_dist   = final_scale * 0.42
-			local wing_dist  = final_scale * 0.46
+			local front_dist = final_scale * 0.90 -- Proyectamos la punta un poco más
+			local wing_dist  = final_scale * 0.45
 
 			local tip_x = marker_x - sin_a * front_dist
 			local tip_y = marker_y - cos_a * front_dist
 
-			local mid_x = marker_x - sin_a * mid_dist
-			local mid_y = marker_y - cos_a * mid_dist
-
+			-- El núcleo se queda exactamente en el centro (marker_x, marker_y)
+			
 			local wing1_x = marker_x + cos_a * wing_dist
 			local wing1_y = marker_y - sin_a * wing_dist
 
 			local wing2_x = marker_x - cos_a * wing_dist
 			local wing2_y = marker_y + sin_a * wing_dist
 
-			local sh = math.max(0.03, final_scale * 0.04)
+			-- =====================================================
+			-- 1. RETÍCULA DE NAVEGACIÓN (Guía Visual Periférica)
+			-- =====================================================
+			local reticle_len = final_scale * 1.2
+			local reticle_thick = math.max(0.02, final_scale * 0.03)
+			local gap = final_scale * 0.6 -- Espacio vacío entre el avatar y la línea
+			local reticle_color = "#FFFFFF88" -- Blanco semitransparente para no estorbar
 
-			-- Componente 1: Sombra Central (Anclaje de masa)
+			-- Línea Norte
+			formspec[formspec_index] = string.format("box[%.2f,%.2f;%.2f,%.2f;%s]", marker_x - reticle_thick/2, marker_y - reticle_len - gap, reticle_thick, reticle_len, reticle_color)
+			formspec_index = formspec_index + 1
+			-- Línea Sur
+			formspec[formspec_index] = string.format("box[%.2f,%.2f;%.2f,%.2f;%s]", marker_x - reticle_thick/2, marker_y + gap, reticle_thick, reticle_len, reticle_color)
+			formspec_index = formspec_index + 1
+			-- Línea Este
+			formspec[formspec_index] = string.format("box[%.2f,%.2f;%.2f,%.2f;%s]", marker_x + gap, marker_y - reticle_thick/2, reticle_len, reticle_thick, reticle_color)
+			formspec_index = formspec_index + 1
+			-- Línea Oeste
+			formspec[formspec_index] = string.format("box[%.2f,%.2f;%.2f,%.2f;%s]", marker_x - reticle_len - gap, marker_y - reticle_thick/2, reticle_len, reticle_thick, reticle_color)
+			formspec_index = formspec_index + 1
+
+			-- =====================================================
+			-- 2. AVATAR PRINCIPAL (Sombra Expandida y Delineado)
+			-- =====================================================
+			local sh_exp = math.max(0.04, final_scale * 0.05)
+
+			-- Sombra Central Expandida (Base de contraste suave)
 			formspec[formspec_index] = string.format(
-				"box[%.2f,%.2f;%.2f,%.2f;#000000]",
-				marker_x - half_main + sh, marker_y - half_main + sh, main_size, main_size
+				"box[%.2f,%.2f;%.2f,%.2f;#000000BB]",
+				marker_x - half_main - sh_exp/2, marker_y - half_main - sh_exp/2, main_size + sh_exp, main_size + sh_exp
 			)
 			formspec_index = formspec_index + 1
 
-			-- Componente 2: Cuerpo Principal
+			-- Cuerpo Principal
 			formspec[formspec_index] = string.format(
 				"box[%.2f,%.2f;%.2f,%.2f;%s]",
 				marker_x - half_main, marker_y - half_main, main_size, main_size, p_color
 			)
 			formspec_index = formspec_index + 1
 
-			-- Componente 3: SOMBRA FRONTAL (Anclaje direccional táctico de alto contraste)
+			-- Sombra de Punta Frontal
 			formspec[formspec_index] = string.format(
-				"box[%.2f,%.2f;%.2f,%.2f;#000000]",
-				tip_x - half_tip + sh, tip_y - half_tip + sh, tip_size, tip_size
+				"box[%.2f,%.2f;%.2f,%.2f;#000000BB]",
+				tip_x - half_tip - sh_exp/2, tip_y - half_tip - sh_exp/2, tip_size + sh_exp, tip_size + sh_exp
 			)
 			formspec_index = formspec_index + 1
 
-			-- Componente 4: Punta Frontal
+			-- Punta Frontal
 			formspec[formspec_index] = string.format(
 				"box[%.2f,%.2f;%.2f,%.2f;%s]",
 				tip_x - half_tip, tip_y - half_tip, tip_size, tip_size, p_color
 			)
 			formspec_index = formspec_index + 1
 
-			-- Componente 5: Sección Media
-			formspec[formspec_index] = string.format(
-				"box[%.2f,%.2f;%.2f,%.2f;%s]",
-				mid_x - half_mid, mid_y - half_mid, mid_size, mid_size, p_color
-			)
-			formspec_index = formspec_index + 1
-
-			-- Componente 6: Ala Derecha
+			-- Ala Derecha
 			formspec[formspec_index] = string.format(
 				"box[%.2f,%.2f;%.2f,%.2f;%s]",
 				wing1_x - half_wing, wing1_y - half_wing, wing_size, wing_size, p_color
 			)
 			formspec_index = formspec_index + 1
 
-			-- Componente 7: Ala Izquierda
+			-- Ala Izquierda
 			formspec[formspec_index] = string.format(
 				"box[%.2f,%.2f;%.2f,%.2f;%s]",
 				wing2_x - half_wing, wing2_y - half_wing, wing_size, wing_size, p_color
+			)
+			formspec_index = formspec_index + 1
+
+			-- =====================================================
+			-- 3. NÚCLEO DE PRECISIÓN ABSOLUTA
+			-- =====================================================
+			local core_size = math.max(0.06, final_scale * 0.08)
+			formspec[formspec_index] = string.format(
+				"box[%.2f,%.2f;%.2f,%.2f;#FFFFFF]",
+				marker_x - (core_size/2), marker_y - (core_size/2), core_size, core_size
 			)
 			formspec_index = formspec_index + 1
 
@@ -1564,28 +1736,190 @@ function persistent_map.show_map(player_name)
 end
 
 minetest.register_chatcommand("map", {
-	description = S("Open the persistent map"),
-	func = function(name)
-		map_view_offset[name] = {x = 0, z = 0}
-		if not map_zoom_level[name] then
-			map_zoom_level[name] = persistent_map.default_zoom_index
-		end
-		persistent_map.show_map(name)
-		return true, S("Map opened")
-	end,
+    params = "",
+    description = S("Abre la interfaz principal del Mapa Telemétrico Avanzado.\n") ..
+                  S("Uso: /map\n") ..
+                  S("Desde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D."),
+    func = function(name)
+        map_view_offset[name] = {x = 0, z = 0}
+        if not map_zoom_level[name] then
+            map_zoom_level[name] = persistent_map.default_zoom_index
+        end
+        persistent_map.show_map(name)
+        return true, S("Map opened")
+    end,
+})
+
+-- =========================================================
+-- COMANDO: VISIÓN NOCTURNA TÁCTICA
+-- =========================================================
+minetest.register_chatcommand("nv", {
+    description = S("Activa/Desactiva la Visión Nocturna Táctica.\n") ..
+                  S("Uso: /nv\n") ..
+                  S("Emisor adaptativo que ilumina cuevas y zonas submarinas con coste cero."),
+    func = function(name)
+        local player = minetest.get_player_by_name(name)
+        if not player then return false end
+        
+        local data = persistent_map.get_player_data(name)
+        if not data then return false, S("Datos no inicializados.") end
+
+        data.nv_active = not data.nv_active
+
+        if data.nv_active then
+            player:override_day_night_ratio(1.0)
+            minetest.chat_send_player(name, minetest.colorize("#00FF88", S(">> Visión Nocturna: ACTIVADA")))
+        else
+            player:override_day_night_ratio(nil)
+            -- Restaurar el bloque físico al apagar el sistema
+            if data.nv_pos and data.nv_saved_node then
+                local node = minetest.get_node(data.nv_pos)
+                if node.name == "advanced_discovery_maps:nv_beacon" or node.name == "advanced_discovery_maps:nv_beacon_liquid" then
+                    minetest.swap_node(data.nv_pos, data.nv_saved_node)
+                end
+                data.nv_pos = nil
+                data.nv_saved_node = nil
+            end
+            minetest.chat_send_player(name, minetest.colorize("#FF8800", S(">> Visión Nocturna: DESACTIVADA")))
+        end
+        return true
+    end,
+})
+
+-- =========================================================
+-- COMANDO: CONTROL DE PROPULSIÓN (VUELO)
+-- =========================================================
+minetest.register_chatcommand("flyspeed", {
+    params = "<velocidad>",
+    description = S("Controla la velocidad de vuelo.\n") ..
+                  S("Uso: /flyspeed <número>\n") ..
+                  S("Nota: Solo se activa en el aire para no alterar la velocidad en tierra."),
+    privs = { fly = true },
+    func = function(name, param)
+        local speed = tonumber(param)
+        if speed and speed >= 0 then
+            local data = persistent_map.get_player_data(name)
+            if data then
+                data.target_flyspeed = speed
+                data.fly_state = nil -- Forzamos la actualización física en el próximo tick
+                minetest.chat_send_player(name, minetest.colorize("#00FF88", S(">> Velocidad de vuelo establecida a @1", param)))
+                return true
+            end
+        end
+        return false, minetest.colorize("#ff0000", S("Velocidad inválida. Usa un número positivo."))
+    end,
+})
+
+-- =========================================================
+-- COMANDOS: CONTROL DE ATLETISMO (CARRERA Y SALTO)
+-- =========================================================
+minetest.register_chatcommand("runspeed", {
+    params = "<velocidad>",
+    description = S("Controla tu velocidad de carrera en tierra firme.\n") ..
+                  S("Uso: /runspeed <número> (Ej. /runspeed 2)"),
+    func = function(name, param)
+        local speed = tonumber(param)
+        if speed and speed >= 0 then
+            local data = persistent_map.get_player_data(name)
+            if data then
+                data.target_runspeed = speed
+                data.fly_state = nil -- Obliga al motor a actualizar las físicas en el próximo tick
+                minetest.chat_send_player(name, minetest.colorize("#00FF88", S(">> Velocidad de carrera establecida a @1", param)))
+                return true
+            end
+        end
+        return false, minetest.colorize("#ff0000", S("Valor inválido. Usa un número positivo."))
+    end,
+})
+
+minetest.register_chatcommand("jumpheight", {
+    params = "<altura>",
+    description = S("Controla la potencia de tus saltos.\n") ..
+                  S("Uso: /jumpheight <número> (Ej. /jumpheight 1.5)"),
+    func = function(name, param)
+        local jump = tonumber(param)
+        if jump and jump >= 0 then
+            local data = persistent_map.get_player_data(name)
+            if data then
+                data.target_jump = jump
+                data.fly_state = nil -- Obliga al motor a actualizar las físicas en el próximo tick
+                minetest.chat_send_player(name, minetest.colorize("#00FF88", S(">> Altura de salto establecida a @1", param)))
+                return true
+            end
+        end
+        return false, minetest.colorize("#ff0000", S("Valor inválido. Usa un número positivo."))
+    end,
+})
+
+-- =========================================================
+-- COMANDO: INVOCAR VARITA DE EXCAVACIÓN
+-- =========================================================
+minetest.register_chatcommand("varita", {
+    params = "",
+    description = S("Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'."),
+    privs = { give = true }, -- Restringido a administradores para evitar abusos
+    func = function(name)
+        local player = minetest.get_player_by_name(name)
+        if not player then return false end
+        
+        local inv = player:get_inventory()
+        -- Verificamos que el servidor no intente forzar un ítem en un inventario lleno
+        if inv:room_for_item("main", "advanced_discovery_maps:tuxmatic_wand") then
+            inv:add_item("main", "advanced_discovery_maps:tuxmatic_wand")
+            return true, minetest.colorize("#FF3030", S(">> Arsenal desplegado: Varita de Excavación recibida."))
+        else
+            return false, minetest.colorize("#ff0000", S("Error: Tu inventario está lleno."))
+        end
+    end,
+})
+
+-- =========================================================
+-- COMANDO: MANUAL TÁCTICO (ÍNDICE CENTRALIZADO)
+-- =========================================================
+minetest.register_chatcommand("map_ayuda", {
+    params = "",
+    description = S("Muestra el directorio de todos los comandos y habilidades tácticas del mod."),
+    func = function(name)
+        local msg = "\n" .. 
+            minetest.colorize("#00FF88", S("=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ===")) .. "\n" ..
+            minetest.colorize("#00D8FF", "/map") .. " - " .. S("Abre la interfaz del mapa topográfico.") .. "\n" ..
+            minetest.colorize("#00D8FF", "/nv") .. " - " .. S("Activa/desactiva la visión nocturna (Coste Cero).") .. "\n" ..
+            minetest.colorize("#00D8FF", "/flyspeed <num>") .. " - " .. S("Calibra la velocidad de vuelo en el aire.") .. "\n" ..
+            minetest.colorize("#00D8FF", "/runspeed <num>") .. " - " .. S("Calibra la velocidad de carrera en tierra.") .. "\n" ..
+            minetest.colorize("#00D8FF", "/jumpheight <num>") .. " - " .. S("Calibra la potencia y altura de salto.") .. "\n" ..
+            minetest.colorize("#00D8FF", "/actualizar_mapa <radio>") .. " - " .. S("Fuerza un escaneo geológico manual.") .. "\n" ..
+            minetest.colorize("#00D8FF", "/mapparty") .. " - " .. S("Gestiona tus grupos para compartir exploración.") .. "\n" ..
+            minetest.colorize("#00D8FF", "/markers") .. " - " .. S("Abre el menú de gestión de rastreadores.") .. "\n\n" ..
+            minetest.colorize("#FF3030", S("=== ARSENAL CLASIFICADO ===")) .. "\n" ..
+            minetest.colorize("#FF3030", "/varita") .. " - " .. S("Invoca la Varita de Excavación (Requiere permisos).") .. "\n\n" ..
+            minetest.colorize("#FFFF00", S("Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all"))
+            
+        return true, msg
+    end,
 })
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname == "persistent_map:profile" then
+        local name = player:get_player_name()
         if fields.close_profile then
-            minetest.close_formspec(player:get_player_name(), "persistent_map:profile")
+            minetest.close_formspec(name, "persistent_map:profile")
         elseif fields.back_to_map then
-            persistent_map.show_map(player:get_player_name())
+            persistent_map.show_map(name)
+        elseif fields.prof_zoom_in or fields.prof_zoom_out then
+            local data = persistent_map.get_player_data(name)
+            if data and data.profile_view then
+                if fields.prof_zoom_in then
+                    data.profile_view.zoom = math.min(data.profile_view.zoom + 0.5, 4.0) -- Límite 400%
+                else
+                    data.profile_view.zoom = math.max(data.profile_view.zoom - 0.5, 1.0) -- Límite 100%
+                end
+                persistent_map.show_profile_gui(name)
+            end
         end
         return
     end
 
-	if formname ~= "persistent_map:map" then return end
+    if formname ~= "persistent_map:map" then return end
 	
 	local name = player:get_player_name()
 	local offset = map_view_offset[name] or {x = 0, z = 0}
@@ -1613,10 +1947,22 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     end
 	
     if fields.perfil_x or fields.perfil_z then
+        local tiempo_actual = os.time()
+        
+        -- Verificación del Escudo Termodinámico
+        if cooldowns_perfil[name] and tiempo_actual < cooldowns_perfil[name] then
+            local restante = cooldowns_perfil[name] - tiempo_actual
+            minetest.chat_send_player(name, S("El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.", restante))
+            return
+        end
+        
+        -- Aplicar el enfriamiento de 8 segundos
+        cooldowns_perfil[name] = tiempo_actual + TIEMPO_ENFRIAMIENTO_PERFIL
+        
         local axis = fields.perfil_x and "x" or "z"
         local pos = player:get_pos()
         local fixed_coord = (axis == "x") and math.floor(pos.z) or math.floor(pos.x)
-        minetest.chat_send_player(name, S("Generating profile..."))
+        minetest.chat_send_player(name, S("Iniciando escaneo topográfico transversal..."))
         minetest.after(0.1, function()
             persistent_map.generate_profile(name, axis, fixed_coord)
         end)
@@ -1724,6 +2070,11 @@ minetest.register_on_joinplayer(function(player)
 		markers = markers,
 		last_tile_x = nil,
 		last_tile_z = nil,
+        -- Variables inyectadas para control físico:
+        target_flyspeed = 1,
+        target_runspeed = 1,
+        target_jump = 1,
+        fly_state = "ground",
 	}
 	
 	local tile_count = 0
@@ -1797,42 +2148,110 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	local name = player:get_player_name()
-	player_data[name] = nil
-	map_view_offset[name] = nil
-	map_zoom_level[name] = nil
-	minetest.log("action", "[persistent_map] Player " .. name .. " left, data cleaned up")
+    local name = player:get_player_name()
+    player_data[name] = nil
+    map_view_offset[name] = nil
+    map_zoom_level[name] = nil
+    
+    -- Purga de Escudos para mantener el "Estado Cero" en memoria
+    cooldowns_mapa[name] = nil
+    cooldowns_perfil[name] = nil
+    
+    minetest.log("action", "[persistent_map] Player " .. name .. " left, data and cooldowns cleaned up")
 end)
 
 local scan_timer = 0
 minetest.register_globalstep(function(dtime)
-	scan_timer = scan_timer + dtime
-	if scan_timer < persistent_map.scan_interval then return end
-	scan_timer = 0
-	
-	for _, player in ipairs(minetest.get_connected_players()) do
-		local name = player:get_player_name()
-		
-		if not player_data[name] then
-			goto continue
-		end
-		
-		local pos = player:get_pos()
-		local tile_x, tile_z = pos_to_tile_coords(pos)
-		local data = player_data[name]
-		
-		if data.last_tile_x ~= tile_x or data.last_tile_z ~= tile_z then
-			local discovered = add_discovered_tile(name, tile_x, tile_z, function()
-				minetest.chat_send_player(name, S("New area discovered!"))
-			end)
-			if discovered then
-				data.last_tile_x = tile_x
-				data.last_tile_z = tile_z
-			end
-		end
-		
-		::continue::
-	end
+    scan_timer = scan_timer + dtime
+    if scan_timer < persistent_map.scan_interval then return end
+    scan_timer = 0
+    
+    for _, player in ipairs(minetest.get_connected_players()) do
+        local name = player:get_player_name()
+        local data = player_data[name]
+        
+        if not data then goto continue end
+        
+        local pos = player:get_pos()
+        local tile_x, tile_z = pos_to_tile_coords(pos)
+        
+        -- 1. Lógica original de descubrimiento de mapas
+        if data.last_tile_x ~= tile_x or data.last_tile_z ~= tile_z then
+            local discovered = add_discovered_tile(name, tile_x, tile_z, function()
+                minetest.chat_send_player(name, S("New area discovered!"))
+            end)
+            if discovered then
+                data.last_tile_x = tile_x
+                data.last_tile_z = tile_z
+            end
+        end
+
+        -- 2. Lógica del Faro de Visión Nocturna Submarina y Subterránea
+        if data.nv_active then
+            local head_pos = vector.round(pos)
+            head_pos.y = head_pos.y + 1 -- Posicionamos la luz exactamente en la cámara
+            
+            -- Solo actualizamos si el jugador cruzó a un nuevo bloque
+            if not data.nv_pos or not vector.equals(data.nv_pos, head_pos) then
+                
+                -- A) Restaurar el bloque anterior silenciosamente
+                if data.nv_pos and data.nv_saved_node then
+                    local current_old = minetest.get_node(data.nv_pos)
+                    if current_old.name == "advanced_discovery_maps:nv_beacon" or current_old.name == "advanced_discovery_maps:nv_beacon_liquid" then
+                        minetest.swap_node(data.nv_pos, data.nv_saved_node)
+                    end
+                end
+                
+                -- B) Analizar y guardar el nuevo bloque
+                local current_node = minetest.get_node(head_pos)
+                local def = minetest.registered_nodes[current_node.name]
+                
+                -- Solo inyectamos luz si NO es roca sólida (evitamos asfixia)
+                if def and not def.walkable then
+                    data.nv_saved_node = current_node
+                    data.nv_pos = head_pos
+                    
+                    -- Seleccionar el faro correcto (líquido o aire)
+                    local is_liquid = def.liquidtype == "source" or def.liquidtype == "flowing"
+                    local beacon_name = is_liquid and "advanced_discovery_maps:nv_beacon_liquid" or "advanced_discovery_maps:nv_beacon"
+                    
+                    -- swap_node cambia la RAM sin despertar gravedad o fluidos
+                    minetest.swap_node(head_pos, {name = beacon_name, param2 = current_node.param2})
+                else
+                    data.nv_pos = nil
+                    data.nv_saved_node = nil
+                end
+            end
+        end
+
+        -- 3. Lógica de Velocidad de Vuelo (Coste de RAM Cero)
+        local target_speed = data.target_flyspeed
+        -- Evaluamos solo si el jugador alteró su velocidad o reinició el comando
+        if target_speed and target_speed ~= 1 or data.fly_state == nil then
+            
+            -- Reutilizamos el vector 'pos' modificando solo el eje Y matemáticamente
+            local original_y = pos.y
+            pos.y = math.floor(original_y)
+            local node_at = minetest.get_node(pos).name
+            
+            pos.y = pos.y - 1
+            local node_below = minetest.get_node(pos).name
+            pos.y = original_y -- Restauramos el vector a su estado original
+            
+            local is_flying = (node_below == "air" and node_at == "air")
+            
+            -- Solo inyectamos físicas si el estado ha CAMBIADO
+            if is_flying and data.fly_state ~= "flying" then
+                player:set_physics_override({ speed = target_speed })
+                data.fly_state = "flying"
+            elseif not is_flying and data.fly_state ~= "ground" then
+                player:set_physics_override({ speed = 1 })
+                data.fly_state = "ground"
+            end
+        end
+        
+        ::continue::
+    end
 end)
 
 minetest.register_craftitem("advanced_discovery_maps:map_book", {
@@ -1900,18 +2319,32 @@ function persistent_map.save_versions()
 end
 
 -- =========================================================
--- SISTEMA DE ACTUALIZACIÓN POR ÁREA (COLA ASÍNCRONA)
+-- SISTEMA DE ACTUALIZACIÓN POR ÁREA (COLA ASÍNCRONA BLINDADA)
 -- =========================================================
 minetest.register_chatcommand("actualizar_mapa", {
-    description = S("Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)"),
+    params = "[radio]",
+    description = S("Fuerza la actualización topográfica del mapa en tu posición actual.\n") ..
+                  S("Uso: /actualizar_mapa [radio]\n") ..
+                  S("Ejemplo: '/actualizar_mapa 1' actualiza 3x3 cuadrantes.\n") ..
+                  S("Nota: Operación de alto coste de memoria. El radio máximo permitido es 3."),
     func = function(name, param)
         local player = minetest.get_player_by_name(name)
         if not player then return false end
 
+        -- Verificación del Escudo Termodinámico
+        local tiempo_actual = os.time()
+        if cooldowns_mapa[name] and tiempo_actual < cooldowns_mapa[name] then
+            local restante = cooldowns_mapa[name] - tiempo_actual
+            return false, S("El motor topográfico asíncrono se está enfriando. Espera @1 segundos.", restante)
+        end
+
         local radio = tonumber(param) or 0
         if radio > 3 then
-            return false, S("Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.")
+            return false, S("Radio denegado. El máximo permitido es 3 (49 cuadrantes) para evitar el colapso del disco.")
         end
+        
+        -- Cálculo matemático del cooldown: Tiempo base + penalización por área solicitada
+        cooldowns_mapa[name] = tiempo_actual + TIEMPO_ENFRIAMIENTO_MAPA + (radio * 5)
 
         local pos = player:get_pos()
         local center_tile_x = math.floor(pos.x / persistent_map.tile_size)
@@ -1935,15 +2368,17 @@ minetest.register_chatcommand("actualizar_mapa", {
         end
 
         if #cola_cuadrantes == 0 then
-            return true, S("No discovered quadrants in this radius to update.")
+            -- Revertimos el enfriamiento si no hubo trabajo de cálculo real
+            cooldowns_mapa[name] = 0
+            return true, S("No hay cuadrantes descubiertos en este radio para actualizar.")
         end
 
-        minetest.chat_send_player(name, S("Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...", #cola_cuadrantes))
+        minetest.chat_send_player(name, S("Iniciando escaneo topográfico de @1 cuadrante(s). Puedes seguir jugando, te notificaré al terminar...", #cola_cuadrantes))
 
         local indice_actual = 1
         local function procesar_siguiente()
             if indice_actual > #cola_cuadrantes then
-                minetest.chat_send_player(name, S("Topography updated successfully! Close and reopen the map to see the changes."))
+                minetest.chat_send_player(name, S("¡Topografía actualizada con éxito! Cierra y reabre el mapa para ver los cambios."))
                 return
             end
 
@@ -1983,20 +2418,265 @@ end
 minetest.register_on_placenode(function(pos) marcar_cuadrante_sucio(pos) end)
 minetest.register_on_dignode(function(pos) marcar_cuadrante_sucio(pos) end)
 
-local vigilante_timer = 0
-minetest.register_globalstep(function(dtime)
-    vigilante_timer = vigilante_timer + dtime
-    if vigilante_timer < 5.0 then return end
-    vigilante_timer = 0
+
+
+-- =========================================================
+-- SISTEMA DE ACTUALIZACIÓN PEREZOSA (LAZY TRACKER) Y MOTOR DE VUELO
+-- =========================================================
+local dirty_tiles = {}
+local TIEMPO_DE_ESPERA = 15
+
+local function marcar_cuadrante_sucio(pos)
+    local tile_x = math.floor(pos.x / persistent_map.tile_size)
+    local tile_z = math.floor(pos.z / persistent_map.tile_size)
+    local tile_id = string.format("tile_%d_%d", tile_x, tile_z)
     
+    dirty_tiles[tile_id] = {
+        tiempo = os.time() + TIEMPO_DE_ESPERA,
+        x = tile_x,
+        z = tile_z
+    }
+end
+
+minetest.register_on_placenode(function(pos) marcar_cuadrante_sucio(pos) end)
+minetest.register_on_dignode(function(pos) marcar_cuadrante_sucio(pos) end)
+
+local motor_timer = 0
+minetest.register_globalstep(function(dtime)
+    motor_timer = motor_timer + dtime
+    if motor_timer < 0.25 then return end -- Ejecuta ambos sistemas 4 veces por segundo
+    motor_timer = 0
+    
+    -- 1. Vigía de Azulejos Sucios (Mapas)
     local tiempo_actual = os.time()
     for base_id, datos in pairs(dirty_tiles) do
         if tiempo_actual >= datos.tiempo then
             persistent_map.tile_versions[base_id] = (persistent_map.tile_versions[base_id] or 0) + 1
             persistent_map.save_versions()
-            
             generate_tile(datos.x, datos.z)
             dirty_tiles[base_id] = nil
         end
     end
+    
+    -- 2. Motor de Seguimiento Físico (Vuelo, Carrera y Salto integrados)
+    for _, player in ipairs(minetest.get_connected_players()) do
+        local name = player:get_player_name()
+        local data = persistent_map.get_player_data(name)
+        
+        if data then
+            local t_fly = data.target_flyspeed
+            local t_run = data.target_runspeed or 1
+            local t_jump = data.target_jump or 1
+            
+            -- Evaluamos si se han alterado las físicas o si se reinició un comando
+            if t_fly and (t_fly ~= 1 or t_run ~= 1 or t_jump ~= 1 or data.fly_state == nil) then
+                local pos = player:get_pos()
+                local original_y = pos.y
+                
+                pos.y = math.floor(original_y)
+                local node_at = minetest.get_node(pos).name
+                
+                pos.y = pos.y - 1
+                local node_below = minetest.get_node(pos).name
+                pos.y = original_y
+                
+                local is_flying = (node_below == "air" and node_at == "air")
+                
+                if is_flying and data.fly_state ~= "flying" then
+                    -- Inyectamos velocidad de vuelo y salto simultáneamente
+                    player:set_physics_override({ speed = t_fly, jump = t_jump })
+                    data.fly_state = "flying"
+                elseif not is_flying and data.fly_state ~= "ground" then
+                    -- Al tocar el suelo, pasamos de t_fly a t_run
+                    player:set_physics_override({ speed = t_run, jump = t_jump })
+                    data.fly_state = "ground"
+                end
+            end
+        end
+    end
+
 end)
+
+-- =========================================================
+-- ALGORITMO TUXMATIC: EXCAVACIÓN ASÍNCRONA ESTRATIFICADA
+-- =========================================================
+local c_air = minetest.get_content_id("air")
+local c_ignore = minetest.get_content_id("ignore")
+
+-- Motor 1: Excavación Recursiva por Capas (Para radios > 20)
+local function tuxmatic_async_layer(pos, radius, current_y, player_name)
+    -- Condición de salida: Hemos rebanado toda la esfera hasta la base
+    if current_y < -radius then
+        minetest.chat_send_player(player_name, minetest.colorize("#00FF88", S(">> Excavación Asíncrona completada.")))
+        return
+    end
+
+    local r_sq = radius * radius
+    local y_sq = current_y * current_y
+    local layer_r = math.ceil(math.sqrt(r_sq - y_sq))
+
+    -- Definimos estrictamente el área de esta única rebanada (1 bloque de altura)
+    local minp = vector.new(pos.x - layer_r, pos.y + current_y, pos.z - layer_r)
+    local maxp = vector.new(pos.x + layer_r, pos.y + current_y, pos.z + layer_r)
+
+    local vm = minetest.get_voxel_manip()
+    local emin, emax = vm:read_from_map(minp, maxp)
+    local data = vm:get_data()
+    local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
+
+    local modificado = false
+    for z = -layer_r, layer_r do
+        for x = -layer_r, layer_r do
+            if x*x + y_sq + z*z <= r_sq then
+                local vi = area:index(pos.x + x, pos.y + current_y, pos.z + z)
+                if data[vi] ~= c_ignore and data[vi] ~= c_air then
+                    data[vi] = c_air 
+                    modificado = true
+                end
+            end
+        end
+    end
+
+    if modificado then
+        vm:set_data(data)
+        vm:write_to_map()
+        vm:update_map()
+        vm:update_liquids()
+    end
+
+    -- Efecto visual por capa procesada (Sensación de rayo orbital)
+    if current_y % 3 == 0 then
+        minetest.add_particlespawner({
+            amount = 15, time = 0.2,
+            minpos = minp, maxpos = maxp,
+            minvel = {x=-2, y=2, z=-2}, maxvel = {x=2, y=8, z=2},
+            minexptime = 1, maxexptime = 2,
+            minsize = 15, maxsize = 30,
+            texture = "tnt_smoke.png",
+        })
+    end
+
+    -- El motor cede el control al procesador durante 0.15s antes de la siguiente capa
+    minetest.after(0.15, function()
+        tuxmatic_async_layer(pos, radius, current_y - 1, player_name)
+    end)
+end
+
+-- Motor 2: Excavación Sincrónica Instantánea (Para radios <= 20)
+local function tuxmatic_sync_boom(pos, radius)
+    local r = radius
+    local minp = vector.new(pos.x - r, pos.y - r, pos.z - r)
+    local maxp = vector.new(pos.x + r, pos.y + r, pos.z + r)
+
+    local vm = minetest.get_voxel_manip()
+    local emin, emax = vm:read_from_map(minp, maxp)
+    local data = vm:get_data()
+    local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
+
+    for z = -r, r do
+        for y = -r, r do
+            for x = -r, r do
+                if x*x + y*y + z*z <= r*r then
+                    local vi = area:index(pos.x + x, pos.y + y, pos.z + z)
+                    if data[vi] ~= c_ignore then
+                        data[vi] = c_air 
+                    end
+                end
+            end
+        end
+    end
+
+    vm:set_data(data)
+    vm:write_to_map()
+    vm:update_map()
+    vm:update_liquids()
+
+    minetest.add_particlespawner({
+        amount = r * 5, time = 0.5,
+        minpos = minp, maxpos = maxp,
+        minvel = {x=-5, y=0, z=-5}, maxvel = {x=5, y=5, z=5},
+        minexptime = 1, maxexptime = 2,
+        minsize = 10, maxsize = 25,
+        texture = "tnt_smoke.png",
+    })
+end
+
+-- Enrutador de Destrucción
+local function tuxmatic_boom(pos, radius, player_name)
+    local tiempo_actual = os.time()
+    
+    if cooldowns_perfil[player_name] and tiempo_actual < cooldowns_perfil[player_name] then
+        local restante = cooldowns_perfil[player_name] - tiempo_actual
+        minetest.chat_send_player(player_name, minetest.colorize("#ff0000", S("La varita se está enfriando. Espera @1 segundos.", restante)))
+        return
+    end
+
+    -- Tiempo de enfriamiento dinámico: Escala según la ambición del radio
+    local cooldown = radius <= 20 and 3 or math.ceil(radius * 0.4)
+    cooldowns_perfil[player_name] = tiempo_actual + cooldown
+
+    local r = math.min(math.max(radius, 1), 100) 
+
+    minetest.sound_play("tnt_explode", {pos = pos, gain = 2.0, max_hear_distance = 128}, true)
+
+    if r <= 20 then
+        tuxmatic_sync_boom(pos, r)
+    else
+        minetest.chat_send_player(player_name, minetest.colorize("#00D8FF", S(">> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...", r)))
+        tuxmatic_async_layer(pos, r, r, player_name) -- Comienza a destruir desde el techo de la esfera
+    end
+end
+
+-- =========================================================
+-- HERRAMIENTA: VARITA DE EXCAVACIÓN TÁCTICA CON INTERFAZ
+-- =========================================================
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+    if formname ~= "advanced_discovery_maps:wand_gui" then return end
+    
+    local item = player:get_wielded_item()
+    if item:get_name() ~= "advanced_discovery_maps:tuxmatic_wand" then return end
+    
+    if fields.radius then
+        local new_radius = tonumber(fields.radius)
+        if new_radius then
+            new_radius = math.min(math.max(new_radius, 1), 100)
+            local meta = item:get_meta()
+            meta:set_int("radius", new_radius)
+            player:set_wielded_item(item)
+            minetest.chat_send_player(player:get_player_name(), minetest.colorize("#00FF88", S(">> Radio de excavación ajustado a @1 bloques.", new_radius)))
+        end
+    end
+end)
+
+local function open_wand_gui(itemstack, user, pointed_thing)
+    local meta = itemstack:get_meta()
+    local current_radius = meta:get_int("radius")
+    if current_radius == 0 then current_radius = 5 end
+    
+    local formspec = "size[4.5,3.5]" ..
+                     "bgcolor[#000000CC;true]" ..
+                     "label[0.5,0.5;" .. S("Calibrar Varita Tuxmatic") .. "]" ..
+                     "field[1,1.8;3,1;radius;" .. S("Radio de Destrucción (1-100)") .. ";" .. current_radius .. "]" ..
+                     "button[1.2,2.6;2,1;save;" .. S("Guardar") .. "]"
+                     
+    minetest.show_formspec(user:get_player_name(), "advanced_discovery_maps:wand_gui", formspec)
+    return itemstack
+end
+
+minetest.register_tool("advanced_discovery_maps:tuxmatic_wand", {
+    description = S("Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio."),
+    inventory_image = "default_stick.png^[colorize:#FF3030:120",
+    range = 25,
+    groups = {not_in_creative_inventory = 0},
+    on_use = function(itemstack, user, pointed_thing)
+        if pointed_thing.type == "node" then
+            local meta = itemstack:get_meta()
+            local radius = meta:get_int("radius")
+            if radius == 0 then radius = 5 end
+            
+            tuxmatic_boom(pointed_thing.under, radius, user:get_player_name()) 
+        end
+    end,
+    on_place = open_wand_gui,
+    on_secondary_use = open_wand_gui,
+})
