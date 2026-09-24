@@ -9,7 +9,7 @@ Este proyecto fue construido bajo los principios del **Algoritmo Tuxmatic**: opt
 ## 🛠 Características Principales
 
 * **Motor de Renderizado Triple Búfer (VoxelManip):** Genera mapas de satélite, relieves topográficos simulados con multiplicadores de sombra direccionales, y mapas batimétricos/subterráneos en una sola lectura de RAM.
-* **Espectrómetro Mineral 2D y Macroscopía GPU:** Genera perfiles de elevación transversales (Eje X o Z). Incorpora un radar de coste computacional cero que resalta minerales subterráneos en colores neón de alto contraste. La navegación panorámica y el zoom se aceleran por hardware (GPU) utilizando contenedores anidados, sin generar latencia en el servidor.
+* **Espectrómetro Mineral 2Dclear y Macroscopía GPU:** Genera perfiles de elevación transversales (Eje X o Z). Incorpora un radar de coste computacional cero que resalta minerales subterráneos en colores neón de alto contraste. La navegación panorámica y el zoom se aceleran por hardware (GPU) utilizando contenedores anidados, sin generar latencia en el servidor.
 * **Cian Fluorescente:** Metales y gemas preciosas (Oro, Diamante, Cobre, etc.).
 * **Magenta Fluorescente:** Fósiles y combustibles (Carbón).
 * **Verde Radiactivo:** Materiales industriales personalizables (ej. Uranio), ajustables desde el código base.
