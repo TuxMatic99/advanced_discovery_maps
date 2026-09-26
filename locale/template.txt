@@ -1,0 +1,174 @@
+# textdomain: advanced_discovery_maps
+
+Advanced Discovery Maps=
+An optimized fullscreen mapping GUI featuring 3D topographic shading, cave and bathymetric scanning, dynamic waypoints, and target-tracking telemetry.=
+
+
+# =========================================================
+# INTERFAZ BASE Y MARCADORES
+# =========================================================
+Marker Management=
+Total Markers: @1=
+No markers found. Create markers using the map interface (/map)=
+away=
+Edit Name=
+Edit Color=
+
+Remove Waypoint=
+Show Waypoint=
+Delete=
+Teleport=
+Add Marker by Coordinates:=
+X:=
+Y:=
+Z:=
+Name:=
+Add Marker=
+Close=
+Open Map=
+Delete All=
+Note: You need 'teleport' privilege to use teleport buttons=
+Select Color for '@1'=
+Cancel=
+Edit Marker Name=
+Current name: @1=
+New name:=
+Save=
+Error: Please enter valid numeric coordinates for X, Y, and Z=
+Marker at @1,@2,@3=
+Deleted marker '@1'=
+You don't have permission to teleport. Need 'teleport' privilege.=
+Teleported to marker '@1' at @2, @3, @4=
+Waypoint set for marker '@1'=
+Waypoint removed=
+No active waypoint found=
+Error: Invalid marker ID=
+Error: Marker name cannot be empty=
+Renamed marker from '@1' to '@2'=
+Error: Marker not found=
+Changed color of marker '@1' from @2 to @3=
+Open the marker management interface=
+Marker GUI opened=
+
+# =========================================================
+# COLORES Y MAPA TELEMÉTRICO
+# =========================================================
+Red=
+Blue=
+Green=
+Yellow=
+Purple=
+Orange=
+White=
+Pink=
+Discovered Map - Close with ESC=
+Navigation:=
+N ↑=
+W ←=
+E →=
+S ↓=
+Center on Player=
+Zoom: @1x=
+Zoom Out (-)=
+Zoom In (+)=
+View Relief=
+View Satellite=
+View Cave Map=
+Measurement Unit=
+Place Marker:=
+Marker Name:=
+Manage Markers=
+Track Marker=
+Closest=
+None=
+Coordinates=
+Destination=
+Distance=
+Quadrant=
+Explored=
+View=
+Markers=
+Map Book=
+Right-click to open the persistent map=
+Open the persistent map=
+Map opened=
+New area discovered!=
+Welcome! You've been given a Map Book. left-click it to explore the world!=
+Show Grid (Quadrants)=
+Hide Grid (Quadrants)=
+Camera Alt=
+
+# =========================================================
+# MOTOR DE ACTUALIZACIÓN Y PERFILES
+# =========================================================
+Starting topographic scan of @1 quadrant(s). You can keep playing, I'll notify you when finished...=
+Topography updated successfully! Close and reopen the map to see the changes.=
+Maximum allowed radius is 3 (49 quadrants) to avoid memory overload.=
+No discovered quadrants in this radius to update.=
+Forces map update. Usage: /actualizar_mapa [radius]. (Ex: /actualizar_mapa 1 updates 3x3 quadrants)=
+Topographic Profile=
+Generating profile...=
+
+# =========================================================
+# ALGORITMO TUXMATIC: TEXTOS NATIVOS INYECTADOS
+# =========================================================
+Análisis Topográfico=
+Elevación: Máx @1m | Mín @2m=
+Prof. Agua: @1m | Prof. Cueva: @2m=
+(Avatar)=
+Acercar Lente (+)=
+Alejar Lente (-)=
+Volver al Mapa=
+Cerrar Escáner=
+Profile X (E-W)=
+Profile Z (N-S)=
+Back to Map=
+
+# =========================================================
+# VARITA DE EXCAVACIÓN Y ESCUDOS TERMODINÁMICOS
+# =========================================================
+>> Excavación Asíncrona completada.=
+La varita se está enfriando. Espera @1 segundos.=
+>> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...=
+>> Radio de excavación ajustado a @1 bloques.=
+Calibrar Varita Tuxmatic=
+Radio de Destrucción (1-100)=
+Guardar=
+Varita de Excavación (Tuxmatic)@nClic Izq: Destruye geología (Hasta R@=100).@nClic Der: Configura el radio.=
+El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=
+Iniciando escaneo topográfico transversal...=
+
+# =========================================================
+# COMANDOS DE CHAT Y MANUAL TÁCTICO
+# =========================================================
+Abre la interfaz principal del Mapa Telemétrico Avanzado.@nUso: /map@nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=
+Activa/Desactiva la Visión Nocturna Táctica.@nUso: /nv@nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=
+Datos no inicializados.=
+>> Visión Nocturna: ACTIVADA=
+>> Visión Nocturna: DESACTIVADA=
+Controla la velocidad de vuelo.@nUso: /flyspeed <número>@nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=
+>> Velocidad de vuelo establecida a @1=
+Velocidad inválida. Usa un número positivo.=
+Controla tu velocidad de carrera en tierra firme.@nUso: /runspeed <número> (Ej. /runspeed 2)=
+>> Velocidad de carrera establecida a @1=
+Valor inválido. Usa un número positivo.=
+Controla la potencia de tus saltos.@nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=
+>> Altura de salto establecida a @1=
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio 'give'.=
+>> Arsenal desplegado: Varita de Excavación recibida.=
+Error: Tu inventario está lleno.=
+Muestra el directorio de todos los comandos y habilidades tácticas del mod.=
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=
+=
+Abre la interfaz del mapa topográfico.=
+Activa/desactiva la visión nocturna (Coste Cero).=
+Calibra la velocidad de vuelo en el aire.=
+Calibra la velocidad de carrera en tierra.=
+Calibra la potencia y altura de salto.=
+Fuerza un escaneo geológico manual.=
+Gestiona tus grupos para compartir exploración.=
+Abre el menú de gestión de rastreadores.=
+@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= ARSENAL CLASIFICADO @=@=@=
+=
+Invoca la Varita de Excavación (Requiere permisos).=
+Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=

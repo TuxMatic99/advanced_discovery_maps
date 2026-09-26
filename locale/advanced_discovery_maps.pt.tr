@@ -1,5 +1,10 @@
 # textdomain: advanced_discovery_maps
 
+Advanced Discovery Maps=Mapas de Descoberta Avançados
+An optimized fullscreen mapping GUI featuring 3D topographic shading, cave and bathymetric scanning, dynamic waypoints, and target-tracking telemetry.=Uma interface gráfica de mapeamento em tela cheia otimizada com sombreamento topográfico 3D, escaneamento de cavernas e batimetria, marcadores dinâmicos e telemetria de rastreamento.
+
+
+
 # =========================================================
 # INTERFAZ BASE Y MARCADORES
 # =========================================================
@@ -129,31 +134,31 @@ La varita se está enfriando. Espera @1 segundos.=A varinha está esfriando. Agu
 Calibrar Varita Tuxmatic=Calibrar Varinha Tuxmatic
 Radio de Destrucción (1-100)=Raio de Destruição (1-100)
 Guardar=Salvar
-Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=Varinha de Escavação (Tuxmatic)\nClique Esq: Destrói a geologia (Até R=100).\nClique Dir: Configura o raio.
+Varita de Excavación (Tuxmatic)@nClic Izq: Destruye geología (Hasta R@=100).@nClic Der: Configura el radio.=Varinha de Escavação (Tuxmatic)@nClique Esq: Destrói a geologia (Até R@=100).@nClique Dir: Configura o raio.
 El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=O scanner geológico está recarregando para proteger a memória. Aguarde @1 segundos.
 Iniciando escaneo topográfico transversal...=Iniciando escaneamento topográfico transversal...
 
 # =========================================================
 # COMANDOS DE CHAT Y MANUAL TÁCTICO
 # =========================================================
-Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Abre a interface principal do Mapa Telemétrico Avançado.\nUso: /map\nA partir da interface, você pode analisar a topografia, gerenciar rastreadores e ver relevos 3D.
-Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Ativa/Desativa a Visão Noturna Tática.\nUso: /nv\nEmissor adaptativo que ilumina cavernas e zonas subaquáticas com custo zero.
+Abre la interfaz principal del Mapa Telemétrico Avanzado.@nUso: /map@nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Abre a interface principal do Mapa Telemétrico Avançado.@nUso: /map@nA partir da interface, você pode analisar a topografia, gerenciar rastreadores e ver relevos 3D.
+Activa/Desactiva la Visión Nocturna Táctica.@nUso: /nv@nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Ativa/Desativa a Visão Noturna Tática.@nUso: /nv@nEmissor adaptativo que ilumina cavernas e zonas subaquáticas com custo zero.
 Datos no inicializados.=Dados não inicializados.
 >> Visión Nocturna: ACTIVADA=>> Visão Noturna: ATIVADA
 >> Visión Nocturna: DESACTIVADA=>> Visão Noturna: DESATIVADA
-Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Controla a velocidade de voo.\nUso: /flyspeed <número>\nNota: Ativado apenas no ar para não alterar a velocidade em terra.
+Controla la velocidad de vuelo.@nUso: /flyspeed <número>@nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Controla a velocidade de voo.@nUso: /flyspeed <número>@nNota: Ativado apenas no ar para não alterar a velocidade em terra.
 >> Velocidad de vuelo establecida a @1=>> Velocidade de voo definida para @1
 Velocidad inválida. Usa un número positivo.=Velocidade inválida. Use um número positivo.
-Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=Controla a sua velocidade de corrida em terra firme.\nUso: /runspeed <número> (Ex: /runspeed 2)
+Controla tu velocidad de carrera en tierra firme.@nUso: /runspeed <número> (Ej. /runspeed 2)=Controla a sua velocidade de corrida em terra firme.@nUso: /runspeed <número> (Ex: /runspeed 2)
 >> Velocidad de carrera establecida a @1=>> Velocidade de corrida definida para @1
 Valor inválido. Usa un número positivo.=Valor inválido. Use um número positivo.
-Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Controla a potência dos seus saltos.\nUso: /jumpheight <número> (Ex: /jumpheight 1.5)
+Controla la potencia de tus saltos.@nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Controla a potência dos seus saltos.@nUso: /jumpheight <número> (Ex: /jumpheight 1.5)
 >> Altura de salto establecida a @1=>> Altura do salto definida para @1
-Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=Adiciona a Varinha de Escavação (Tuxmatic) ao seu inventário.\nRequer o privilégio 'give'.
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio 'give'.=Adiciona a Varinha de Escavação (Tuxmatic) ao seu inventário.@nRequer o privilégio 'give'.
 >> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal implantado: Varinha de Escavação recebida.
 Error: Tu inventario está lleno.=Erro: Seu inventário está cheio.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Mostra o diretório de todos os comandos e habilidades táticas do mod.
-=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== MANUAL TÁTICO (ADVANCED DISCOVERY MAPS) ===
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= MANUAL TÁTICO (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=Abre a interface do mapa topográfico.
 Activa/desactiva la visión nocturna (Coste Cero).=Ativa/desativa a visão noturna (Custo Zero).
 Calibra la velocidad de vuelo en el aire.=Calibra a velocidade de voo no ar.
@@ -162,6 +167,6 @@ Calibra la potencia y altura de salto.=Calibra a potência e a altura do salto.
 Fuerza un escaneo geológico manual.=Força um escaneamento geológico manual.
 Gestiona tus grupos para compartir exploración.=Gerencia seus grupos para compartilhar a exploração.
 Abre el menú de gestión de rastreadores.=Abre o menu de gerenciamento de rastreadores.
-=== ARSENAL CLASIFICADO ====== ARSENAL CLASSIFICADO ===
+@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= ARSENAL CLASSIFICADO @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Invoca a Varinha de Escavação (Requer permissões).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Nota: Para ativar todos os privilégios no Luanti, use o comando /grant <seu_usuario> all ou /grantme all

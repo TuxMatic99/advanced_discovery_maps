@@ -1,5 +1,10 @@
 # textdomain: advanced_discovery_maps
 
+Advanced Discovery Maps=Erweiterte Entdeckungskarten
+An optimized fullscreen mapping GUI featuring 3D topographic shading, cave and bathymetric scanning, dynamic waypoints, and target-tracking telemetry.=Eine optimierte Vollbild-Kartenoberfläche mit topografischer 3D-Schattierung, Höhlen- und Tiefenscans, dynamischen Wegpunkten und Zielverfolgungs-Telemetrie.
+
+
+
 # =========================================================
 # INTERFAZ BASE Y MARCADORES
 # =========================================================
@@ -129,31 +134,31 @@ La varita se está enfriando. Espera @1 segundos.=Der Zauberstab kühlt ab. Wart
 Calibrar Varita Tuxmatic=Tuxmatic-Zauberstab kalibrieren
 Radio de Destrucción (1-100)=Zerstörungsradius (1-100)
 Guardar=Speichern
-Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=Ausgrabungsstab (Tuxmatic)\nLinksklick: Zerstört Geologie (Bis R=100).\nRechtsklick: Radius konfigurieren.
+Varita de Excavación (Tuxmatic)@nClic Izq: Destruye geología (Hasta R@=100).@nClic Der: Configura el radio.=Ausgrabungsstab (Tuxmatic)@nLinksklick: Zerstört Geologie (Bis R@=100).@nRechtsklick: Radius konfigurieren.
 El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=Der Scanner lädt auf, um den Speicher zu schützen. Warte @1 Sekunden.
 Iniciando escaneo topográfico transversal...=Starte transversalen topografischen Scan...
 
 # =========================================================
 # COMANDOS DE CHAT Y MANUAL TÁCTICO
 # =========================================================
-Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Öffnet die Hauptschnittstelle der Telemetriekarte.\nNutzung: /map
-Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Aktiviert/Deaktiviert die taktische Nachtsicht.\nNutzung: /nv
+Abre la interfaz principal del Mapa Telemétrico Avanzado.@nUso: /map@nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Öffnet die Hauptschnittstelle der Telemetriekarte.@nNutzung: /map
+Activa/Desactiva la Visión Nocturna Táctica.@nUso: /nv@nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Aktiviert/Deaktiviert die taktische Nachtsicht.@nNutzung: /nv
 Datos no inicializados.=Daten nicht initialisiert.
 >> Visión Nocturna: ACTIVADA=>> Nachtsicht: AKTIVIERT
 >> Visión Nocturna: DESACTIVADA=>> Nachtsicht: DEAKTIVIERT
-Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Steuert die Fluggeschwindigkeit.\nNutzung: /flyspeed <Nummer>
+Controla la velocidad de vuelo.@nUso: /flyspeed <número>@nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Steuert die Fluggeschwindigkeit.@nNutzung: /flyspeed <Nummer>
 >> Velocidad de vuelo establecida a @1=>> Fluggeschwindigkeit auf @1 gesetzt
 Velocidad inválida. Usa un número positivo.=Ungültige Geschwindigkeit. Verwende eine positive Zahl.
-Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=Steuert die Laufgeschwindigkeit an Land.\nNutzung: /runspeed <Nummer>
+Controla tu velocidad de carrera en tierra firme.@nUso: /runspeed <número> (Ej. /runspeed 2)=Steuert die Laufgeschwindigkeit an Land.@nNutzung: /runspeed <Nummer>
 >> Velocidad de carrera establecida a @1=>> Laufgeschwindigkeit auf @1 gesetzt
 Valor inválido. Usa un número positivo.=Ungültiger Wert. Verwende eine positive Zahl.
-Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Steuert die Sprungkraft.\nNutzung: /jumpheight <Nummer>
+Controla la potencia de tus saltos.@nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Steuert die Sprungkraft.@nNutzung: /jumpheight <Nummer>
 >> Altura de salto establecida a @1=>> Sprunghöhe auf @1 gesetzt
-Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=Fügt den Ausgrabungsstab zum Inventar hinzu.\nBenötigt 'give'-Privileg.
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio 'give'.=Fügt den Ausgrabungsstab zum Inventar hinzu.@nBenötigt 'give'-Privileg.
 >> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal bereitgestellt: Ausgrabungsstab erhalten.
 Error: Tu inventario está lleno.=Fehler: Dein Inventar ist voll.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Zeigt alle taktischen Befehle und Fähigkeiten an.
-=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== TAKTISCHES HANDBUCH (ADVANCED DISCOVERY MAPS) ===
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= TAKTISCHES HANDBUCH (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=Öffnet die topografische Karte.
 Activa/desactiva la visión nocturna (Coste Cero).=Nachtsicht umschalten (Null Kosten).
 Calibra la velocidad de vuelo en el aire.=Fluggeschwindigkeit in der Luft kalibrieren.
@@ -162,6 +167,6 @@ Calibra la potencia y altura de salto.=Sprungkraft und -höhe kalibrieren.
 Fuerza un escaneo geológico manual.=Manuellen geologischen Scan erzwingen.
 Gestiona tus grupos para compartir exploración.=Gruppen verwalten, um Erkundungen zu teilen.
 Abre el menú de gestión de rastreadores.=Menü der Markierungsverwaltung öffnen.
-=== ARSENAL CLASIFICADO ====== GEHEIMES ARSENAL ===
+@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= GEHEIMES ARSENAL @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Beschwört den Ausgrabungsstab (Benötigt Privilegien).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Hinweis: Um alle Privilegien in Luanti zu aktivieren, verwende den Befehl /grant <dein_benutzername> all oder /grantme all

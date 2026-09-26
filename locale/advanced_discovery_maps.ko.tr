@@ -1,5 +1,10 @@
 # textdomain: advanced_discovery_maps
 
+Advanced Discovery Maps=고급 탐험 지도 (Advanced Discovery Maps)
+An optimized fullscreen mapping GUI featuring 3D topographic shading, cave and bathymetric scanning, dynamic waypoints, and target-tracking telemetry.=3D 지형 음영, 동굴 및 수심 스캔, 동적 웨이포인트 및 표적 추적 원격 측정 기능을 갖춘 최적화된 전체 화면 지도 GUI입니다.
+
+
+
 # =========================================================
 # INTERFAZ BASE Y MARCADORES
 # =========================================================
@@ -129,31 +134,31 @@ La varita se está enfriando. Espera @1 segundos.=지팡이가 냉각 중입니�
 Calibrar Varita Tuxmatic=Tuxmatic 지팡이 조정
 Radio de Destrucción (1-100)=파괴 반경 (1-100)
 Guardar=저장
-Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=발굴 지팡이 (Tuxmatic)\n좌클릭: 지형 파괴 (최대 R=100).\n우클릭: 반경 구성.
+Varita de Excavación (Tuxmatic)@nClic Izq: Destruye geología (Hasta R@=100).@nClic Der: Configura el radio.=발굴 지팡이 (Tuxmatic)@n좌클릭: 지형 파괴 (최대 R@=100).@n우클릭: 반경 구성.
 El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=메모리 보호를 위해 지질 스캐너가 재충전 중입니다. @1초 대기.
 Iniciando escaneo topográfico transversal...=횡단 지형 스캔 시작...
 
 # =========================================================
 # COMANDOS DE CHAT Y MANUAL TÁCTICO
 # =========================================================
-Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=고급 원격 측정 지도 인터페이스를 엽니다.\n사용법: /map
-Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=전술 야간 투시경 토글.\n사용법: /nv
+Abre la interfaz principal del Mapa Telemétrico Avanzado.@nUso: /map@nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=고급 원격 측정 지도 인터페이스를 엽니다.@n사용법: /map
+Activa/Desactiva la Visión Nocturna Táctica.@nUso: /nv@nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=전술 야간 투시경 토글.@n사용법: /nv
 Datos no inicializados.=데이터가 초기화되지 않았습니다.
 >> Visión Nocturna: ACTIVADA=>> 야간 투시경: 켜짐
 >> Visión Nocturna: DESACTIVADA=>> 야간 투시경: 꺼짐
-Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=비행 속도를 제어합니다.\n사용법: /flyspeed <숫자>
+Controla la velocidad de vuelo.@nUso: /flyspeed <número>@nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=비행 속도를 제어합니다.@n사용법: /flyspeed <숫자>
 >> Velocidad de vuelo establecida a @1=>> 비행 속도가 @1(으)로 설정됨
 Velocidad inválida. Usa un número positivo.=잘못된 속도입니다. 양수를 사용하세요.
-Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=지상 달리기 속도를 제어합니다.\n사용법: /runspeed <숫자>
+Controla tu velocidad de carrera en tierra firme.@nUso: /runspeed <número> (Ej. /runspeed 2)=지상 달리기 속도를 제어합니다.@n사용법: /runspeed <숫자>
 >> Velocidad de carrera establecida a @1=>> 달리기 속도가 @1(으)로 설정됨
 Valor inválido. Usa un número positivo.=잘못된 값입니다. 양수를 사용하세요.
-Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=점프력을 제어합니다.\n사용법: /jumpheight <숫자>
+Controla la potencia de tus saltos.@nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=점프력을 제어합니다.@n사용법: /jumpheight <숫자>
 >> Altura de salto establecida a @1=>> 점프 높이가 @1(으)로 설정됨
-Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=인벤토리에 발굴 지팡이를 추가합니다.\n'give' 권한이 필요합니다.
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio 'give'.=인벤토리에 발굴 지팡이를 추가합니다.@n'give' 권한이 필요합니다.
 >> Arsenal desplegado: Varita de Excavación recibida.=>> 무기 배치: 발굴 지팡이 획득.
 Error: Tu inventario está lleno.=오류: 인벤토리가 꽉 찼습니다.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=모든 전술 명령 및 스킬을 표시합니다.
-=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== 전술 메뉴얼 (ADVANCED DISCOVERY MAPS) ===
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= 전술 메뉴얼 (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=지형 지도 인터페이스 열기.
 Activa/desactiva la visión nocturna (Coste Cero).=야간 투시경 켜기/끄기 (비용 없음).
 Calibra la velocidad de vuelo en el aire.=공중 비행 속도 조정.
@@ -162,6 +167,6 @@ Calibra la potencia y altura de salto.=점프 높이 조정.
 Fuerza un escaneo geológico manual.=수동 지질 스캔 강제 실행.
 Gestiona tus grupos para compartir exploración.=탐색 공유를 위한 그룹 관리.
 Abre el menú de gestión de rastreadores.=트래커 관리 메뉴 열기.
-=== ARSENAL CLASIFICADO ====== 기밀 무기 ===
+@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= 기밀 무기 @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=발굴 지팡이 소환 (권한 필요).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=참고: Luanti에서 모든 권한을 활성화하려면 /grant <사용자_이름> all 또는 /grantme all 명령을 사용하세요

@@ -1,5 +1,10 @@
 # textdomain: advanced_discovery_maps
 
+Advanced Discovery Maps=高级探索地图 (Advanced Discovery Maps)
+An optimized fullscreen mapping GUI featuring 3D topographic shading, cave and bathymetric scanning, dynamic waypoints, and target-tracking telemetry.=优化的全屏地图界面，具有 3D 地形阴影、洞穴和水深扫描、动态路径点以及目标追踪遥测功能。
+
+
+
 # =========================================================
 # INTERFAZ BASE Y MARCADORES
 # =========================================================
@@ -129,31 +134,31 @@ La varita se está enfriando. Espera @1 segundos.=魔杖正在冷却。请等待
 Calibrar Varita Tuxmatic=校准 Tuxmatic 魔杖
 Radio de Destrucción (1-100)=破坏半径 (1-100)
 Guardar=保存
-Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=挖掘魔杖 (Tuxmatic)\n左键: 破坏地形 (最大 R=100)\n右键: 配置半径
+Varita de Excavación (Tuxmatic)@nClic Izq: Destruye geología (Hasta R@=100).@nClic Der: Configura el radio.=挖掘魔杖 (Tuxmatic)@n左键: 破坏地形 (最大 R@=100)@n右键: 配置半径
 El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=地质扫描仪正在重新充电以保护内存。请等待 @1 秒。
 Iniciando escaneo topográfico transversal...=正在启动横向地形扫描...
 
 # =========================================================
 # COMANDOS DE CHAT Y MANUAL TÁCTICO
 # =========================================================
-Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=打开高级遥测地图的主界面。\n用法: /map
-Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=开启/关闭战术夜视仪。\n用法: /nv
+Abre la interfaz principal del Mapa Telemétrico Avanzado.@nUso: /map@nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=打开高级遥测地图的主界面。@n用法: /map
+Activa/Desactiva la Visión Nocturna Táctica.@nUso: /nv@nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=开启/关闭战术夜视仪。@n用法: /nv
 Datos no inicializados.=数据未初始化。
 >> Visión Nocturna: ACTIVADA=>> 夜视仪: 已开启
 >> Visión Nocturna: DESACTIVADA=>> 夜视仪: 已关闭
-Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=控制飞行速度。\n用法: /flyspeed <数字>
+Controla la velocidad de vuelo.@nUso: /flyspeed <número>@nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=控制飞行速度。@n用法: /flyspeed <数字>
 >> Velocidad de vuelo establecida a @1=>> 飞行速度已设置为 @1
 Velocidad inválida. Usa un número positivo.=无效的速度。请使用正数。
-Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=控制地面奔跑速度。\n用法: /runspeed <数字>
+Controla tu velocidad de carrera en tierra firme.@nUso: /runspeed <número> (Ej. /runspeed 2)=控制地面奔跑速度。@n用法: /runspeed <数字>
 >> Velocidad de carrera establecida a @1=>> 奔跑速度已设置为 @1
 Valor inválido. Usa un número positivo.=无效的值。请使用正数。
-Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=控制跳跃力度。\n用法: /jumpheight <数字>
+Controla la potencia de tus saltos.@nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=控制跳跃力度。@n用法: /jumpheight <数字>
 >> Altura de salto establecida a @1=>> 跳跃高度已设置为 @1
-Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=将挖掘魔杖添加到您的物品栏。\n需要 'give' 权限。
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio 'give'.=将挖掘魔杖添加到您的物品栏。@n需要 'give' 权限。
 >> Arsenal desplegado: Varita de Excavación recibida.=>> 武器已部署: 获得挖掘魔杖。
 Error: Tu inventario está lleno.=错误: 您的物品栏已满。
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=显示该模组的所有战术命令和技能指南。
-=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== 战术手册 (ADVANCED DISCOVERY MAPS) ===
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= 战术手册 (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=打开地形地图界面。
 Activa/desactiva la visión nocturna (Coste Cero).=开启/关闭夜视仪（零消耗）。
 Calibra la velocidad de vuelo en el aire.=校准空中飞行速度。
@@ -162,6 +167,6 @@ Calibra la potencia y altura de salto.=校准跳跃高度。
 Fuerza un escaneo geológico manual.=强制进行手动地质扫描。
 Gestiona tus grupos para compartir exploración.=管理您的群组以共享探索。
 Abre el menú de gestión de rastreadores.=打开追踪器管理菜单。
-=== ARSENAL CLASIFICADO ====== 机密武器库 ===
+@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= 机密武器库 @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=召唤挖掘魔杖（需要权限）。
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=注意：要在 Luanti 中激活所有权限，请使用命令 /grant <你的用户名> all 或 /grantme all

@@ -1,5 +1,10 @@
 # textdomain: advanced_discovery_maps
 
+Advanced Discovery Maps=Продвинутые карты исследования
+An optimized fullscreen mapping GUI featuring 3D topographic shading, cave and bathymetric scanning, dynamic waypoints, and target-tracking telemetry.=Оптимизированный полноэкранный интерфейс карты с 3D-топографическим затенением, сканированием пещер и глубин, динамическими путевыми точками y телеметрией отслеживания целей.
+
+
+
 # =========================================================
 # INTERFAZ BASE Y MARCADORES
 # =========================================================
@@ -129,31 +134,31 @@ La varita se está enfriando. Espera @1 segundos.=Палочка остывае�
 Calibrar Varita Tuxmatic=Калибровка палочки Tuxmatic
 Radio de Destrucción (1-100)=Радиус разрушения (1-100)
 Guardar=Сохранить
-Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio.=Палочка раскопок (Tuxmatic)\nЛКМ: Разрушает породу (До R=100).\nПКМ: Настроить радиус.
+Varita de Excavación (Tuxmatic)@nClic Izq: Destruye geología (Hasta R@=100).@nClic Der: Configura el radio.=Палочка раскопок (Tuxmatic)@nЛКМ: Разрушает породу (До R@=100).@nПКМ: Настроить радиус.
 El escáner geológico se está recargando para proteger la memoria. Espera @1 segundos.=Геологический сканер заряжается для защиты памяти. Подождите @1 сек.
 Iniciando escaneo topográfico transversal...=Запуск поперечного сканирования...
 
 # =========================================================
 # COMANDOS DE CHAT Y MANUAL TÁCTICO
 # =========================================================
-Abre la interfaz principal del Mapa Telemétrico Avanzado.\nUso: /map\nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Открывает интерфейс телеметрической карты.\nИспользование: /map
-Activa/Desactiva la Visión Nocturna Táctica.\nUso: /nv\nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Вкл/Выкл тактическое ночное видение.\nИспользование: /nv
+Abre la interfaz principal del Mapa Telemétrico Avanzado.@nUso: /map@nDesde la interfaz puedes analizar topografía, gestionar rastreadores y ver relieves 3D.=Открывает интерфейс телеметрической карты.@nИспользование: /map
+Activa/Desactiva la Visión Nocturna Táctica.@nUso: /nv@nEmisor adaptativo que ilumina cuevas y zonas submarinas con coste cero.=Вкл/Выкл тактическое ночное видение.@nИспользование: /nv
 Datos no inicializados.=Данные не инициализированы.
 >> Visión Nocturna: ACTIVADA=>> Ночное видение: ВКЛЮЧЕНО
 >> Visión Nocturna: DESACTIVADA=>> Ночное видение: ВЫКЛЮЧЕНО
-Controla la velocidad de vuelo.\nUso: /flyspeed <número>\nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Контроль скорости полета.\nИспользование: /flyspeed <число>
+Controla la velocidad de vuelo.@nUso: /flyspeed <número>@nNota: Solo se activa en el aire para no alterar la velocidad en tierra.=Контроль скорости полета.@nИспользование: /flyspeed <число>
 >> Velocidad de vuelo establecida a @1=>> Скорость полета установлена на @1
 Velocidad inválida. Usa un número positivo.=Неверная скорость. Используйте положительное число.
-Controla tu velocidad de carrera en tierra firme.\nUso: /runspeed <número> (Ej. /runspeed 2)=Контроль скорости бега.\nИспользование: /runspeed <число>
+Controla tu velocidad de carrera en tierra firme.@nUso: /runspeed <número> (Ej. /runspeed 2)=Контроль скорости бега.@nИспользование: /runspeed <число>
 >> Velocidad de carrera establecida a @1=>> Скорость бега установлена на @1
 Valor inválido. Usa un número positivo.=Неверное значение. Используйте положительное число.
-Controla la potencia de tus saltos.\nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Контроль высоты прыжка.\nИспользование: /jumpheight <число>
+Controla la potencia de tus saltos.@nUso: /jumpheight <número> (Ej. /jumpheight 1.5)=Контроль высоты прыжка.@nИспользование: /jumpheight <число>
 >> Altura de salto establecida a @1=>> Высота прыжка установлена на @1
-Añade la Varita de Excavación (Tuxmatic) a tu inventario.\nRequiere privilegio 'give'.=Добавляет палочку раскопок в инвентарь.\nТребует привилегию 'give'.
+Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio 'give'.=Добавляет палочку раскопок в инвентарь.@nТребует привилегию 'give'.
 >> Arsenal desplegado: Varita de Excavación recibida.=>> Арсенал развернут: Палочка получена.
 Error: Tu inventario está lleno.=Ошибка: Ваш инвентарь полон.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Отображает список всех тактических команд мода.
-=== MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) ====== ТАКТИЧЕСКОЕ РУКОВОДСТВО (ADVANCED DISCOVERY MAPS) ===
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= ТАКТИЧЕСКОЕ РУКОВОДСТВО (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=Открывает интерфейс топографической карты.
 Activa/desactiva la visión nocturna (Coste Cero).=Включает ночное видение (Без затрат).
 Calibra la velocidad de vuelo en el aire.=Калибрует скорость полета.
@@ -162,6 +167,6 @@ Calibra la potencia y altura de salto.=Калибрует высоту прыж�
 Fuerza un escaneo geológico manual.=Принудительное сканирование геологии.
 Gestiona tus grupos para compartir exploración.=Управление группами для обмена картой.
 Abre el menú de gestión de rastreadores.=Открыть меню управления трекерами.
-=== ARSENAL CLASIFICADO ====== ЗАСЕКРЕЧЕННЫЙ АРСЕНАЛ ===
+@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= ЗАСЕКРЕЧЕННЫЙ АРСЕНАЛ @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Призывает палочку раскопок (Нужны права).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Примечание: Чтобы активировать все привилегии в Luanti, используйте команду /grant <ваше_имя_пользователя> all или /grantme all
