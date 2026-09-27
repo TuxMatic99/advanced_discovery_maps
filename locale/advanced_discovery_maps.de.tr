@@ -158,7 +158,7 @@ Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio
 >> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal bereitgestellt: Ausgrabungsstab erhalten.
 Error: Tu inventario está lleno.=Fehler: Dein Inventar ist voll.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Zeigt alle taktischen Befehle und Fähigkeiten an.
-@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= TAKTISCHES HANDBUCH (ADVANCED DISCOVERY MAPS) @=@=@=
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@==@=@=@= TAKTISCHES HANDBUCH (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=Öffnet die topografische Karte.
 Activa/desactiva la visión nocturna (Coste Cero).=Nachtsicht umschalten (Null Kosten).
 Calibra la velocidad de vuelo en el aire.=Fluggeschwindigkeit in der Luft kalibrieren.
@@ -167,6 +167,6 @@ Calibra la potencia y altura de salto.=Sprungkraft und -höhe kalibrieren.
 Fuerza un escaneo geológico manual.=Manuellen geologischen Scan erzwingen.
 Gestiona tus grupos para compartir exploración.=Gruppen verwalten, um Erkundungen zu teilen.
 Abre el menú de gestión de rastreadores.=Menü der Markierungsverwaltung öffnen.
-@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= GEHEIMES ARSENAL @=@=@=
+@=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= GEHEIMES ARSENAL @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Beschwört den Ausgrabungsstab (Benötigt Privilegien).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Hinweis: Um alle Privilegien in Luanti zu aktivieren, verwende den Befehl /grant <dein_benutzername> all oder /grantme all

@@ -158,7 +158,7 @@ Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio
 >> Arsenal desplegado: Varita de Excavación recibida.=>> 무기 배치: 발굴 지팡이 획득.
 Error: Tu inventario está lleno.=오류: 인벤토리가 꽉 찼습니다.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=모든 전술 명령 및 스킬을 표시합니다.
-@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= 전술 메뉴얼 (ADVANCED DISCOVERY MAPS) @=@=@=
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@==@=@=@= 전술 메뉴얼 (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=지형 지도 인터페이스 열기.
 Activa/desactiva la visión nocturna (Coste Cero).=야간 투시경 켜기/끄기 (비용 없음).
 Calibra la velocidad de vuelo en el aire.=공중 비행 속도 조정.
@@ -167,6 +167,6 @@ Calibra la potencia y altura de salto.=점프 높이 조정.
 Fuerza un escaneo geológico manual.=수동 지질 스캔 강제 실행.
 Gestiona tus grupos para compartir exploración.=탐색 공유를 위한 그룹 관리.
 Abre el menú de gestión de rastreadores.=트래커 관리 메뉴 열기.
-@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= 기밀 무기 @=@=@=
+@=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= 기밀 무기 @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=발굴 지팡이 소환 (권한 필요).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=참고: Luanti에서 모든 권한을 활성화하려면 /grant <사용자_이름> all 또는 /grantme all 명령을 사용하세요

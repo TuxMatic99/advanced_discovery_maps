@@ -158,7 +158,7 @@ Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio
 >> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal desplegado: Varita de Excavación recibida.
 Error: Tu inventario está lleno.=Error: Tu inventario está lleno.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Muestra el directorio de todos los comandos y habilidades tácticas del mod.
-@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@==@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=Abre la interfaz del mapa topográfico.
 Activa/desactiva la visión nocturna (Coste Cero).=Activa/desactiva la visión nocturna (Coste Cero).
 Calibra la velocidad de vuelo en el aire.=Calibra la velocidad de vuelo en el aire.
@@ -167,6 +167,6 @@ Calibra la potencia y altura de salto.=Calibra la potencia y altura de salto.
 Fuerza un escaneo geológico manual.=Fuerza un escaneo geológico manual.
 Gestiona tus grupos para compartir exploración.=Gestiona tus grupos para compartir exploración.
 Abre el menú de gestión de rastreadores.=Abre el menú de gestión de rastreadores.
-@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= ARSENAL CLASIFICADO @=@=@=
+@=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= ARSENAL CLASIFICADO @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Invoca la Varita de Excavación (Requiere permisos).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all

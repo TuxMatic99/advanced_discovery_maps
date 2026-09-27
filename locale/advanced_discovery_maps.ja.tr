@@ -158,7 +158,7 @@ Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio
 >> Arsenal desplegado: Varita de Excavación recibida.=>> 武器展開: 発掘の杖を受け取りました。
 Error: Tu inventario está lleno.=エラー: インベントリがいっぱいです。
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Modのすべてのコマンドと戦術的スキルを表示します。
-@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= 戦術マニュアル (ADVANCED DISCOVERY MAPS) @=@=@=
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@==@=@=@= 戦術マニュアル (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=地形マップのインターフェースを開きます。
 Activa/desactiva la visión nocturna (Coste Cero).=ナイトビジョンを切り替えます（負荷ゼロ）。
 Calibra la velocidad de vuelo en el aire.=空中での飛行速度を調整します。
@@ -167,6 +167,6 @@ Calibra la potencia y altura de salto.=ジャンプ力と高さを調整しま�
 Fuerza un escaneo geológico manual.=手動で地質スキャンを強制実行します。
 Gestiona tus grupos para compartir exploración.=探索を共有するためのグループを管理します。
 Abre el menú de gestión de rastreadores.=トラッカー管理メニューを開きます。
-@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= 極秘兵器 @=@=@=
+@=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= 極秘兵器 @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=発掘の杖を呼び出します（権限が必要）。
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=注: Luantiですべての権限を有効にするには、コマンド /grant <ユーザー名> all または /grantme all を使用します

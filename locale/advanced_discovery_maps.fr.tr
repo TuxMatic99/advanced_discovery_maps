@@ -158,7 +158,7 @@ Añade la Varita de Excavación (Tuxmatic) a tu inventario.@nRequiere privilegio
 >> Arsenal desplegado: Varita de Excavación recibida.=>> Arsenal déployé : Baguette d'excavation reçue.
 Error: Tu inventario está lleno.=Erreur : Votre inventaire est plein.
 Muestra el directorio de todos los comandos y habilidades tácticas del mod.=Affiche le répertoire de toutes les commandes et compétences tactiques du mod.
-@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@=@=@=@= MANUEL TACTIQUE (ADVANCED DISCOVERY MAPS) @=@=@=
+@=@=@= MANUAL TÁCTICO (ADVANCED DISCOVERY MAPS) @=@=@==@=@=@= MANUEL TACTIQUE (ADVANCED DISCOVERY MAPS) @=@=@=
 Abre la interfaz del mapa topográfico.=Ouvre l'interface de la carte topographique.
 Activa/desactiva la visión nocturna (Coste Cero).=Active/désactive la vision nocturne (Coût Zéro).
 Calibra la velocidad de vuelo en el aire.=Calibre la vitesse de vol en l'air.
@@ -167,6 +167,6 @@ Calibra la potencia y altura de salto.=Calibre la puissance et la hauteur de sau
 Fuerza un escaneo geológico manual.=Force une analyse géologique manuelle.
 Gestiona tus grupos para compartir exploración.=Gère vos groupes pour partager l'exploration.
 Abre el menú de gestión de rastreadores.=Ouvre le menu de gestion des traceurs.
-@=@=@= ARSENAL CLASIFICADO @=@=@=@=@=@= ARSENAL CLASSIFIÉ @=@=@=
+@=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= ARSENAL CLASSIFIÉ @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Invoque la baguette d'excavation (Nécessite des permissions).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Note : Pour activer tous les privilèges dans Luanti, utilisez la commande /grant <votre_utilisateur> all ou /grantme all
