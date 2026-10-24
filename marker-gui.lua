@@ -7,11 +7,14 @@ local S = minetest.get_translator(modname)
 -- Store active waypoint HUDs for players
 local active_waypoints = {}
 
+-- Store active sorting
+local sorting = {}
+
 -- GUI configuration
 local marker_gui = {
 	formspec_version = 6,
-	window_width = 25,   -- CORRECCIÓN: Ampliado de 21 a 25 para dar espacio al texto
-	window_height = 12,
+	window_width = 29,   -- CORRECCIÓN: Ampliado de 21 a 25 para dar espacio al texto. Even larger is better.
+	window_height = 15,  -- Bigger window
 	padding = 0.5,
 	button_height = 0.8,
 	button_width = 2.4,  -- CORRECCIÓN: Reducido de 3 a 2.4 para compactar los botones
@@ -21,12 +24,67 @@ local marker_gui = {
 	footer_height = 2,
 }
 
+
+-- Sorting funcs
+local function sort_by_timestamp(marker_list)
+	if not marker_list then
+		return {}
+	end
+	
+	-- Sort by timestamp (newest first)
+	table.sort(marker_list, function(a, b)
+		return (a.timestamp or 0) > (b.timestamp or 0)
+	end)
+	
+	return marker_list
+end
+
+local function sort_by_color(marker_list)
+	if not marker_list then
+		return {}
+	end
+	
+	-- Sort by color (based on color)
+	table.sort(marker_list, function(a, b)
+		return (a.color_index or 0) > (b.color_index or 0)
+	end)
+	
+	return marker_list
+end
+
+local function sort_by_distance(marker_list, player)
+	if not player then return {} end
+	if not marker_list then return {} end
+	
+	-- Calculate distance from player
+	local player_pos = player:get_pos()
+	if player_pos then
+		-- Sort by timestamp (newest first)
+		table.sort(marker_list, function(a, b)
+			return (vector.distance(player_pos, vector.new(a.x, a.y, a.z)) or 0) < 
+					(vector.distance(player_pos, vector.new(b.x, b.y, b.z)) or 0)
+		end)
+		
+	end
+			
+	return marker_list
+end
+
+
 -- Get marker list for a player
 local function get_player_markers_list(player_name)
+	local player = minetest.get_player_by_name(player_name)
 	local player_data_entry = persistent_map.get_player_data(player_name)
 	if not player_data_entry then
 		return {}
 	end
+	
+	if not player then
+		return {}
+	end
+				
+	if not sorting[player] or sorting[player] == "" then sorting[player]="color" end
+	
 	
 	local markers = player_data_entry.markers
 	local marker_list = {}
@@ -43,13 +101,12 @@ local function get_player_markers_list(player_name)
 		})
 	end
 	
-	-- Sort by timestamp (newest first)
-	table.sort(marker_list, function(a, b)
-		return (a.timestamp or 0) > (b.timestamp or 0)
-	end)
-	
-	return marker_list
+	if sorting[player] == "distance" then return sort_by_distance(marker_list,player) end
+	if sorting[player] == "color" then return sort_by_color(marker_list) end
+	if sorting[player] == "timestamp" then return sort_by_timestamp(marker_list) end
 end
+
+
 
 -- Add waypoint HUD for a marker
 local function addWaypointHud(player, marker)
@@ -118,6 +175,7 @@ function persistent_map.show_marker_gui(player_name)
 	
 	-- Calculate content height based on number of markers
 	local content_height = math.max(marker_gui.scroll_height, #markers * marker_gui.list_item_height)
+	local needs_scrollbar = marker_gui.scroll_height < #markers * marker_gui.list_item_height
 	
 	local formspec = {}
 	formspec[1] = string.format("formspec_version[%d]", marker_gui.formspec_version)
@@ -134,7 +192,7 @@ function persistent_map.show_marker_gui(player_name)
 	-- Scrollable container for marker list
 	local scroll_y = header_y + marker_gui.header_height
 	formspec[6] = string.format(
-		"scroll_container[%.2f,%.2f;%.2f,%.2f;marker_list;vertical;0.1]",
+		"scroll_container[%.2f,%.2f;%.2f,%.2f;marker_list;vertical;0.1;0.1]",
 		marker_gui.padding, scroll_y, 
 		marker_gui.window_width - marker_gui.padding * 2, 
 		marker_gui.scroll_height
@@ -254,7 +312,26 @@ function persistent_map.show_marker_gui(player_name)
 	
 	-- Close scroll container
 	formspec[formspec_index] = "scroll_container_end[]"
-	formspec_index = formspec_index + 1
+	
+	-- A scrollbar is needed
+	if needs_scrollbar then
+                local item_loc = math.ceil(marker_gui.scroll_height * marker_gui.list_item_height)
+				formspec[formspec_index+1] = ("scrollbaroptions[min=%i,max=%i;arrows=show]"):format(
+					item_loc * 1,			-- min
+					item_loc * #markers 	-- max
+				)
+				formspec[formspec_index+2] = ("scrollbar[%g,%g;0.3,%g;vertical;marker_list;%i]"):format(
+					marker_gui.padding / 2, -- x pos
+					scroll_y , -- y pos
+					marker_gui.scroll_height, -- height
+					item_loc * 0 -- default value : 0
+				)
+				-- Restore default options (for later usage)
+				formspec[formspec_index+3] = "scrollbaroptions[max=1000;arrows=default]"
+				formspec_index = formspec_index + 3
+	else 
+		formspec_index = formspec_index + 1
+	end
 	
 	-- Add marker section
 	local add_marker_y = marker_gui.window_height - marker_gui.footer_height - 2.5
@@ -350,6 +427,30 @@ function persistent_map.show_marker_gui(player_name)
 		"button[%.2f,%.2f;%.2f,%.2f;open_map;%s]",
 		marker_gui.padding + marker_gui.button_width + 0.2, footer_y,
 		marker_gui.button_width, marker_gui.button_height, S("Open Map")
+	)
+	formspec_index = formspec_index + 1
+	
+	-- Sort by timestamp button
+	formspec[formspec_index] = string.format(
+		"button[%.2f,%.2f;%.2f,%.2f;sort_timestamp;Sort by Timestamp]",
+		(marker_gui.padding + marker_gui.button_width + 0.2) * 3 , footer_y,
+		marker_gui.button_width, marker_gui.button_height
+	)
+	formspec_index = formspec_index + 1
+	
+	-- Sort by timestamp button
+	formspec[formspec_index] = string.format(
+		"button[%.2f,%.2f;%.2f,%.2f;sort_color;Sort by Color]",
+		(marker_gui.padding + marker_gui.button_width + 0.2) * 4 , footer_y,
+		marker_gui.button_width, marker_gui.button_height
+	)
+	formspec_index = formspec_index + 1
+	
+	-- Sort by timestamp button
+	formspec[formspec_index] = string.format(
+		"button[%.2f,%.2f;%.2f,%.2f;sort_distance;Sort by Distance]",
+		(marker_gui.padding + marker_gui.button_width + 0.2) * 5 , footer_y,
+		marker_gui.button_width, marker_gui.button_height
 	)
 	formspec_index = formspec_index + 1
 	
@@ -510,6 +611,28 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			persistent_map.set_map_zoom_level(player_name, persistent_map.default_zoom_index)
 		end
 		persistent_map.show_map(player_name)
+		return
+	end
+	
+	-- Sort handling 
+	if fields.sort_timestamp then
+		sorting[player]="timestamp"
+		minetest.chat_send_player(player_name, "Sorting by Timestamp")
+		persistent_map.show_marker_gui(player_name) -- Refresh the GUI
+		return
+	end
+	
+	if fields.sort_distance then
+		sorting[player]="distance"
+		minetest.chat_send_player(player_name, "Sorting by Distance")
+		persistent_map.show_marker_gui(player_name) -- Refresh the GUI
+		return
+	end
+	
+	if fields.sort_color then
+		sorting[player]="color"
+		minetest.chat_send_player(player_name, "Sorting by Color")
+		persistent_map.show_marker_gui(player_name) -- Refresh the GUI
 		return
 	end
 	
