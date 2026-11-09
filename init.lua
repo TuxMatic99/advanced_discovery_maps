@@ -342,13 +342,35 @@ local function generate_tile(tile_x, tile_z, callback)
         return base_id
     end
     
-    local minp = vector.new(tile_x * persistent_map.tile_size, persistent_map.min_height, tile_z * persistent_map.tile_size)
-    local maxp = vector.new((tile_x + 1) * persistent_map.tile_size - 1, persistent_map.max_height, (tile_z + 1) * persistent_map.tile_size - 1)
+    -- ADM-FASE2-SCAN-BOUNDS: modo configurable, sin alterar el modo original.
+    -- full: rango completo original; balanced/light: superficies y cuevas cercanas.
+    -- La lectura acotada es aproximada fuera del intervalo elegido.
+    local scan_mode = minetest.settings:get("adm_scan_mode") or "full"
+    local scan_bottom = persistent_map.min_height
+    local scan_top = persistent_map.max_height
+    if scan_mode == "balanced" then
+        scan_bottom = math.max(scan_bottom, -192)
+        scan_top = math.min(scan_top, 320)
+    elseif scan_mode == "light" then
+        scan_bottom = math.max(scan_bottom, -128)
+        scan_top = math.min(scan_top, 192)
+    else
+        scan_mode = "full"
+    end
+
+    local minp = vector.new(tile_x * persistent_map.tile_size, scan_bottom, tile_z * persistent_map.tile_size)
+    local maxp = vector.new((tile_x + 1) * persistent_map.tile_size - 1, scan_top, (tile_z + 1) * persistent_map.tile_size - 1)
     
     minetest.after(0.05, function()
+        local adm_profile = minetest.settings:get_bool("adm_profile_tiles", false)
+        local adm_t0 = adm_profile and minetest.get_us_time()
         local vm = minetest.get_voxel_manip()
         local emin, emax = vm:read_from_map(minp, maxp)
         local data = vm:get_data()
+        local adm_t_read = adm_profile and minetest.get_us_time()
+        -- Desde Luanti 5.13, libera memoria nativa antes de procesar pixeles.
+        -- La tabla Lua 'data' contiene una copia independiente.
+        if vm.close then vm:close() end
         local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
         
         local c_air = minetest.get_content_id("air")
@@ -624,6 +646,7 @@ local function generate_tile(tile_x, tile_z, callback)
             heightmap_cave_norte = heightmap_cave_actual
             heightmap_visual_norte = heightmap_visual_actual
         end
+        local adm_t_pixels = adm_profile and minetest.get_us_time()
         
         local filename_std = persistent_map.map_path .. tile_id .. ".png"
         local filename_rel = persistent_map.map_path .. tile_id .. "_relief.png"
@@ -636,10 +659,21 @@ local function generate_tile(tile_x, tile_z, callback)
         minetest.safe_file_write(filename_std, png_std)
         minetest.safe_file_write(filename_rel, png_rel)
         minetest.safe_file_write(filename_cave, png_cave)
+
+        if adm_profile then
+            local adm_t_done = minetest.get_us_time()
+            minetest.log("action", string.format(
+                "[ADM-PERF] %s modo=%s y=%d..%d lectura=%.1fms pixeles=%.1fms png+disco=%.1fms total=%.1fms",
+                tile_id, scan_mode, scan_bottom, scan_top,
+                (adm_t_read - adm_t0) / 1000,
+                (adm_t_pixels - adm_t_read) / 1000,
+                (adm_t_done - adm_t_pixels) / 1000,
+                (adm_t_done - adm_t0) / 1000))
+        end
         
-        minetest.dynamic_add_media(filename_std, function()
-            minetest.dynamic_add_media(filename_rel, function()
-                minetest.dynamic_add_media(filename_cave, function()
+        minetest.dynamic_add_media({filepath = filename_std}, function()
+            minetest.dynamic_add_media({filepath = filename_rel}, function()
+                minetest.dynamic_add_media({filepath = filename_cave}, function()
                     if callback then callback(base_id) end
                 end)
             end)
@@ -2304,6 +2338,7 @@ dofile(modpath .. "/marker-gui.lua")
 dofile(modpath .. "/marker-share.lua")
 dofile(modpath .. "/map-party.lua")
 dofile(modpath .. "/map-party-gui.lua")
+dofile(modpath .. "/biome_sensor.lua")
 
 -- =========================================================
 -- SISTEMA DE VERSIONADO Y ACTUALIZACIÓN (CACHE BUSTING)
@@ -2400,23 +2435,7 @@ minetest.register_chatcommand("actualizar_mapa", {
 -- =========================================================
 -- SISTEMA DE ACTUALIZACIÓN PEREZOSA (LAZY TRACKER)
 -- =========================================================
-local dirty_tiles = {}
-local TIEMPO_DE_ESPERA = 15
-
-local function marcar_cuadrante_sucio(pos)
-    local tile_x = math.floor(pos.x / persistent_map.tile_size)
-    local tile_z = math.floor(pos.z / persistent_map.tile_size)
-    local tile_id = string.format("tile_%d_%d", tile_x, tile_z)
-    
-    dirty_tiles[tile_id] = {
-        tiempo = os.time() + TIEMPO_DE_ESPERA,
-        x = tile_x,
-        z = tile_z
-    }
-end
-
-minetest.register_on_placenode(function(pos) marcar_cuadrante_sucio(pos) end)
-minetest.register_on_dignode(function(pos) marcar_cuadrante_sucio(pos) end)
+-- Rastreador duplicado retirado: se conserva el que procesa dirty_tiles más abajo.
 
 
 

@@ -170,3 +170,17 @@ Abre el menú de gestión de rastreadores.=Abre el menú de gestión de rastread
 @=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= ARSENAL CLASIFICADO @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Invoca la Varita de Excavación (Requiere permisos).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all
+
+Unknown=Desconocido
+Biome: @1=Bioma: @1
+Loading=Cargando
+Show current biome data, or toggle the optional biome HUD=Muestra los datos del bioma actual o activa/desactiva el HUD opcional
+Player not found=Jugador no encontrado
+Biome HUD disabled=HUD de biomas desactivado
+Biome HUD enabled=HUD de biomas activado
+Usage: /bioma [hud]=Uso: /bioma [hud]
+Biome information unavailable=Información del bioma no disponible
+ (estimated near biome boundaries)= (estimado cerca de los límites entre biomas)
+Heat: @1=Calor: @1
+Humidity: @1=Humedad: @1
+Mapgen: @1=Generador: @1
