@@ -683,6 +683,13 @@ local function generate_tile(tile_x, tile_z, callback)
     return base_id
 end
 
+-- ADM-FASE3-ENTRY: atlas y procesamiento progresivo
+-- El generador antiguo permanece disponible si la prueba revela diferencias.
+if minetest.settings:get_bool("adm_progressive_tiles", false) then
+    generate_tile = dofile(modpath .. "/map_engine_progressive.lua")(
+        persistent_map, get_tile_id, tile_exists, get_node_color, map_path)
+end
+
 local function load_player_tiles(player_name)
 	local data = storage:get_string("player_" .. player_name)
 	if data == "" then return {} end
@@ -2699,3 +2706,14 @@ minetest.register_tool("advanced_discovery_maps:tuxmatic_wand", {
     on_place = open_wand_gui,
     on_secondary_use = open_wand_gui,
 })
+
+
+-- ADM-FASE3-UI: rediseño de interfaz optativo y reversible.
+if minetest.settings:get_bool("adm_ui_modern", true) then
+    dofile(modpath .. "/map_ui_modern.lua")
+end
+
+-- ADM-FASE3.1-OVERLAY: mapa HUD durante el desplazamiento.
+if minetest.settings:get_bool("adm_walkmap_enabled", true) then
+    dofile(modpath .. "/map_walk.lua")
+end
