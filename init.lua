@@ -671,9 +671,12 @@ local function generate_tile(tile_x, tile_z, callback)
                 (adm_t_done - adm_t0) / 1000))
         end
         
-        minetest.dynamic_add_media({filepath = filename_std}, function()
-            minetest.dynamic_add_media({filepath = filename_rel}, function()
-                minetest.dynamic_add_media({filepath = filename_cave}, function()
+        minetest.dynamic_add_media({filepath = filename_std}, function(player_name)
+            if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. ".png") end
+            minetest.dynamic_add_media({filepath = filename_rel}, function(player_name)
+                if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. "_relief.png") end
+                minetest.dynamic_add_media({filepath = filename_cave}, function(player_name)
+                    if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. "_cave.png") end
                     if callback then callback(base_id) end
                 end)
             end)
@@ -725,6 +728,7 @@ local function add_discovered_tile(player_name, tile_x, tile_z, callback)
 			filepath = filename,
 			to_player = player_name,
 		}, function(pname)
+			if persistent_map.media_mark_ready then persistent_map.media_mark_ready(pname, tile_id .. ".png") end
 			if callback then callback() end
 		end)
 	end)
@@ -2140,6 +2144,7 @@ minetest.register_on_joinplayer(function(player)
 				filepath = filename_std,
 				to_player = name,
 			}, function(player_name)
+				if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, file_id .. ".png") end
 				minetest.log("action", "[persistent_map] Reloaded standard tile " .. tile_id .. " for " .. player_name)
 			end)
 			
@@ -2150,7 +2155,8 @@ minetest.register_on_joinplayer(function(player)
 			        filepath = filename_rel,
 			        to_player = name,
 			    }, function(player_name)
-			        minetest.log("action", "[persistent_map] Reloaded relief tile " .. tile_id .. " for " .. player_name)
+			        if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, file_id .. "_relief.png") end
+				minetest.log("action", "[persistent_map] Reloaded relief tile " .. tile_id .. " for " .. player_name)
 			    end)
 			end
 			
@@ -2161,6 +2167,7 @@ minetest.register_on_joinplayer(function(player)
 				filepath = map_path .. file_id .. "_cave.png",
 				to_player = name,
 			    }, function(player_name)
+				if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, file_id .. "_cave.png") end
 				minetest.log("action", "[persistent_map] Reloaded cave tile " .. tile_id .. " for " .. player_name)
 			    end)
 			end
@@ -2707,6 +2714,9 @@ minetest.register_tool("advanced_discovery_maps:tuxmatic_wand", {
     on_secondary_use = open_wand_gui,
 })
 
+
+-- ADM-FASE4-MEDIA: registro de medios listo antes del Atlas y del HUD.
+dofile(modpath .. "/map_media.lua")
 
 -- ADM-FASE3-UI: rediseño de interfaz optativo y reversible.
 if minetest.settings:get_bool("adm_ui_modern", true) then

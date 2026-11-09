@@ -120,8 +120,9 @@ function P.show_map(player_name)
                         local file_base = version_name .. suffix
                         local fp = map_path .. file_base .. ".png"
                         local f = io.open(fp, "rb")
-                        if f then
-                            f:close()
+                        if f then f:close() end
+                        -- No mostrar el PNG hasta que el cliente confirme su entrega.
+                        if f and P.media_request(player_name, file_base .. ".png") then
                             add(out, fmt("image_button[%.3f,%.3f;%.3f,%.3f;%s.png;map_click_%d_%d;;false;false]", x, y, tile_px, tile_px, file_base, tx, tz))
                         else
                             add(out, fmt("box[%.3f,%.3f;%.3f,%.3f;%s]", x, y, tile_px, tile_px, theme.missing))

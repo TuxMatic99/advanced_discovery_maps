@@ -1,8 +1,7 @@
--- Advanced Discovery Maps: exploracion con mapa HUD, Luanti 5.10+.
--- Este modulo no cambia el terreno ni genera cuadrantes.
+-- ADM: minimapa HUD de marcha, sin ventanas modales (Luanti 5.10+).
+-- Media enviada solo cuando el cliente confirma la recepción.
 local core = minetest
 local P = persistent_map
-local S = core.get_translator(core.get_current_modname())
 local floor, abs, pi = math.floor, math.abs, math.pi
 local fmt = string.format
 local active = {}
@@ -10,25 +9,17 @@ local accumulator = 0
 local TILES_PIXELS = 64
 local CX, CY = -137, 150
 local BLANK = "adm_empty.png"
+local hz = tonumber(core.settings:get("adm_walkmap_hz")) or 10
+hz = math.max(2, math.min(15, hz))
+local PERIOD = 1 / hz
 
 local function direction_index(yaw)
     yaw = tonumber(yaw) or 0
     return floor((yaw % (2 * pi)) * 16 / (2 * pi) + 0.5) % 16
 end
 
-local function tile_texture(pdata, tx, tz, mode)
-    local id = fmt("tile_%d_%d", tx, tz)
-    if not pdata.discovered_tiles or not pdata.discovered_tiles[id] then
-        return BLANK
-    end
-    local version = P.tile_versions and P.tile_versions[id] or 0
-    local base = version > 0 and (id .. "_v" .. version) or id
-    local suffix = mode == "relief" and "_relief" or mode == "cave" and "_cave" or ""
-    local name = base .. suffix .. ".png"
-    local file = io.open(P.map_path .. name, "rb")
-    if not file then return BLANK end
-    file:close()
-    return name
+local function round(value)
+    return floor(value + 0.5)
 end
 
 local function image(player, name, texture, x, y, scale, z_index)
@@ -43,10 +34,10 @@ local function image(player, name, texture, x, y, scale, z_index)
 end
 
 local function stop(name, player)
-    local state = active[name]
-    if not state then return end
+    local s = active[name]
+    if not s then return end
     if player then
-        for _, id in ipairs(state.ids) do
+        for _, id in ipairs(s.ids) do
             player:hud_remove(id)
         end
     end
@@ -56,19 +47,29 @@ end
 local function start(player)
     local name = player:get_player_name()
     if active[name] then return end
-    local state = {ids = {}, cells = {}, mode = nil, tx = nil, tz = nil, refresh = 0}
+    local state = {ids = {}, cells = {}, tx = nil, tz = nil, mode = nil, refresh = 0}
     active[name] = state
     local function register(id)
-        state.ids[#state.ids + 1] = id
+        if id then state.ids[#state.ids + 1] = id end
         return id
     end
     register(image(player, "ADM Map frame", "adm_map_hud_frame.png", CX, CY, 1, -1))
+    -- Enviar primero el cuadrante central: transferencias bajo presupuesto.
+    local coords = {}
     for dz = 1, -1, -1 do
         for dx = -1, 1 do
-            local id = register(image(player, "ADM tile", BLANK,
-                CX + dx * TILES_PIXELS, CY - dz * TILES_PIXELS, 0.5, 0))
-            state.cells[#state.cells + 1] = {id = id, dx = dx, dz = dz, texture = BLANK}
+            coords[#coords + 1] = {dx = dx, dz = dz}
         end
+    end
+    table.sort(coords, function(a, b)
+        return abs(a.dx) + abs(a.dz) < abs(b.dx) + abs(b.dz)
+    end)
+    for _, coord in ipairs(coords) do
+        local id = register(image(player, "ADM tile", BLANK,
+            CX + coord.dx * TILES_PIXELS, CY - coord.dz * TILES_PIXELS, 0.5, 0))
+        state.cells[#state.cells + 1] = {
+            id = id, dx = coord.dx, dz = coord.dz, texture = BLANK,
+        }
     end
     state.pointer = register(image(player, "ADM Player Compass", "adm_player_00.png", CX, CY, 0.48, 5))
     state.label = register(player:hud_add({
@@ -77,6 +78,27 @@ local function start(player)
         offset = {x = CX, y = 276},
         number = 0xD4F8F4, text = "", z_index = 6,
     }))
+end
+
+local function draw_tiles(player, state, pdata, tx, tz, mode)
+    local suffix = mode == "relief" and "_relief" or mode == "cave" and "_cave" or ""
+    local discovered = pdata.discovered_tiles or {}
+    for _, cell in ipairs(state.cells) do
+        local x, z = tx + cell.dx, tz + cell.dz
+        local base = fmt("tile_%d_%d", x, z)
+        local texture = BLANK
+        if discovered[base] then
+            local ver = P.tile_versions and P.tile_versions[base] or 0
+            local file = (ver > 0 and (base .. "_v" .. ver) or base) .. suffix .. ".png"
+            if P.media_request(player:get_player_name(), file) then
+                texture = file
+            end
+        end
+        if texture ~= cell.texture and cell.id then
+            player:hud_change(cell.id, "text", texture)
+            cell.texture = texture
+        end
+    end
 end
 
 local function update(player, state, dtime)
@@ -89,31 +111,27 @@ local function update(player, state, dtime)
     local tx, tz = floor(pos.x / n), floor(pos.z / n)
     local mode = P.player_map_mode[name] or "standard"
     state.refresh = state.refresh + dtime
-    if state.tx ~= tx or state.tz ~= tz or state.mode ~= mode or state.refresh >= 3 then
-        state.tx, state.tz, state.mode, state.refresh = tx, tz, mode, 0
-        for _, cell in ipairs(state.cells) do
-            local texture = tile_texture(pdata, tx + cell.dx, tz + cell.dz, mode)
-            if texture ~= cell.texture then
-                player:hud_change(cell.id, "text", texture)
-                cell.texture = texture
-            end
-        end
+    local epoch = P.media_epoch(name)
+    if state.tx ~= tx or state.tz ~= tz or state.mode ~= mode
+            or state.refresh >= 0.75 or epoch ~= state.epoch then
+        state.tx, state.tz, state.mode, state.refresh, state.epoch = tx, tz, mode, 0, epoch
+        draw_tiles(player, state, pdata, tx, tz, mode)
     end
-    -- El mapa permanece fijo dentro del cuadrante; el indicador se desplaza.
+
     local fx, fz = pos.x / n - tx, pos.z / n - tz
-    local cursor_x = CX + (fx - 0.5) * TILES_PIXELS
-    local cursor_y = CY + (0.5 - fz) * TILES_PIXELS
-    local yaw_index = direction_index(player:get_look_horizontal())
-    if state.cursor_x ~= cursor_x or state.cursor_y ~= cursor_y then
+    local cursor_x = round(CX + (fx - 0.5) * TILES_PIXELS)
+    local cursor_y = round(CY + (0.5 - fz) * TILES_PIXELS)
+    if state.pointer and (state.cursor_x ~= cursor_x or state.cursor_y ~= cursor_y) then
         player:hud_change(state.pointer, "offset", {x = cursor_x, y = cursor_y})
         state.cursor_x, state.cursor_y = cursor_x, cursor_y
     end
-    if state.direction ~= yaw_index then
+    local yaw_index = direction_index(player:get_look_horizontal())
+    if state.pointer and state.direction ~= yaw_index then
         player:hud_change(state.pointer, "text", fmt("adm_player_%02d.png", yaw_index))
         state.direction = yaw_index
     end
     local label = fmt("X %d   Z %d  |  %s", floor(pos.x), floor(pos.z), mode)
-    if label ~= state.last_label then
+    if state.label and label ~= state.last_label then
         player:hud_change(state.label, "text", label)
         state.last_label = label
     end
@@ -125,7 +143,7 @@ local function toggle(player, desired)
     if should_enable == nil then should_enable = active[name] == nil end
     if should_enable then
         if not active[name] then start(player) end
-        update(player, active[name], 3)
+        update(player, active[name], 1)
         return true
     end
     stop(name, player)
@@ -134,7 +152,7 @@ end
 
 core.register_chatcommand("map_movil", {
     params = "[on|off]",
-    description = "Mostrar u ocultar el mapa HUD para caminar y explorar",
+    description = "Mostrar u ocultar el mapa HUD mientras caminas",
     func = function(name, param)
         local player = core.get_player_by_name(name)
         if not player then return false, "Jugador no disponible" end
@@ -143,8 +161,7 @@ core.register_chatcommand("map_movil", {
             return false, "Uso: /map_movil [on|off]"
         end
         local enabled = toggle(player, param == "" and nil or param == "on")
-        return true, enabled and "Mapa movil activado. Usa /map_movil off para ocultarlo."
-            or "Mapa movil desactivado."
+        return true, enabled and "Mapa movil activado" or "Mapa movil desactivado"
     end,
 })
 
@@ -156,8 +173,9 @@ core.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 core.register_globalstep(function(dtime)
+    if next(active) == nil then return end
     accumulator = accumulator + dtime
-    if accumulator < 0.25 then return end
+    if accumulator < PERIOD then return end
     local dt = accumulator
     accumulator = 0
     for name, state in pairs(active) do
@@ -173,4 +191,4 @@ end)
 core.register_on_leaveplayer(function(player)
     stop(player:get_player_name(), player)
 end)
-core.log("action", "[advanced_discovery_maps] Mapa HUD para caminar disponible: /map_movil")
+core.log("action", "[advanced_discovery_maps] HUD optimizado: /map_movil")

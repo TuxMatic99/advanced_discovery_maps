@@ -383,9 +383,12 @@ local function generate_tile(tile_x, tile_z, callback)
         queue_busy = false
         minetest.after(0.025, start_next_job)
 
-        minetest.dynamic_add_media({filepath = filename_std}, function()
-            minetest.dynamic_add_media({filepath = filename_rel}, function()
-                minetest.dynamic_add_media({filepath = filename_cave}, function()
+        minetest.dynamic_add_media({filepath = filename_std}, function(player_name)
+            if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. ".png") end
+            minetest.dynamic_add_media({filepath = filename_rel}, function(player_name)
+                if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. "_relief.png") end
+                minetest.dynamic_add_media({filepath = filename_cave}, function(player_name)
+                    if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. "_cave.png") end
                     local listeners = pending[tile_id] or {}
                     pending[tile_id] = nil
                     for _, listener in ipairs(listeners) do
