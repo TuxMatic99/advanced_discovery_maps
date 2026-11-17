@@ -170,3 +170,8 @@ Abre el menú de gestión de rastreadores.=Menü der Markierungsverwaltung öffn
 @=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= GEHEIMES ARSENAL @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Beschwört den Ausgrabungsstab (Benötigt Privilegien).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Hinweis: Um alle Privilegien in Luanti zu aktivieren, verwende den Befehl /grant <dein_benutzername> all oder /grantme all
+Game time: @1=Spielzeit: @1
+Show or hide the in-game clock=Die Spieluhr ein- oder ausblenden
+Usage: /reloj [on|off]=Verwendung: /reloj [on|off]
+Clock HUD enabled=Spieluhr aktiviert
+Clock HUD disabled=Spieluhr deaktiviert

@@ -170,3 +170,8 @@ Abre el menú de gestión de rastreadores.=Открыть меню управл�
 @=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= ЗАСЕКРЕЧЕННЫЙ АРСЕНАЛ @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Призывает палочку раскопок (Нужны права).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Примечание: Чтобы активировать все привилегии в Luanti, используйте команду /grant <ваше_имя_пользователя> all или /grantme all
+Game time: @1=Игровое время: @1
+Show or hide the in-game clock=Показать или скрыть игровые часы
+Usage: /reloj [on|off]=Использование: /reloj [on|off]
+Clock HUD enabled=Часы включены
+Clock HUD disabled=Часы выключены

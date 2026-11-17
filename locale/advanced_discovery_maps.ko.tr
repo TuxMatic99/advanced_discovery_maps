@@ -170,3 +170,8 @@ Abre el menú de gestión de rastreadores.=트래커 관리 메뉴 열기.
 @=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= 기밀 무기 @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=발굴 지팡이 소환 (권한 필요).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=참고: Luanti에서 모든 권한을 활성화하려면 /grant <사용자_이름> all 또는 /grantme all 명령을 사용하세요
+Game time: @1=게임 시간: @1
+Show or hide the in-game clock=게임 시계 표시 또는 숨기기
+Usage: /reloj [on|off]=사용법: /reloj [on|off]
+Clock HUD enabled=시계 표시됨
+Clock HUD disabled=시계 숨김

@@ -170,3 +170,8 @@ Abre el menú de gestión de rastreadores.=打开追踪器管理菜单。
 @=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= 机密武器库 @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=召唤挖掘魔杖（需要权限）。
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=注意：要在 Luanti 中激活所有权限，请使用命令 /grant <你的用户名> all 或 /grantme all
+Game time: @1=游戏时间：@1
+Show or hide the in-game clock=显示或隐藏游戏时钟
+Usage: /reloj [on|off]=用法：/reloj [on|off]
+Clock HUD enabled=时钟已启用
+Clock HUD disabled=时钟已关闭

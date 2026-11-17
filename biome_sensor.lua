@@ -147,76 +147,168 @@ function sensor.get_at(pos)
     }
 end
 
-local huds = {}  -- Solo jugadores con HUD habilitado.
+-- ADM-P6-HUD: Telemetria de biomas y reloj en una sola rutina ligera.
+-- No modifica el sensor, los mapas, la varita ni la vision nocturna.
+local huds = {}
+local clocks = {}
 local META_HUD = "adm_biome_hud"
+local META_CLOCK = "adm_clock_hud"
+local step_elapsed = 0
+local biome_elapsed = 0
 
-local function hud_text(info)
-    local label = info and info.name or S("Unknown")
-    if info and info.approximate then label = label .. " ~" end
-    return S("Biome: @1", label)
+-- El HUD del Atlas movil se situa a la derecha; por defecto estos datos
+-- se muestran a la izquierda, por debajo de la zona habitual del chat.
+local function layout()
+    local corner = core.settings:get("adm_info_hud_corner") or "top-left"
+    local is_right = corner == "top-right"
+    local is_bottom = corner == "bottom-left"
+    local y_default = is_bottom and 0.65 or 0.24
+    local y = tonumber(core.settings:get("adm_info_hud_y")) or y_default
+    y = math.max(0.08, math.min(0.82, y))
+    return {x = is_right and 1 or 0, y = y},
+           is_right and -18 or 18,
+           is_right and -1 or 1
 end
 
-local function update_hud(player, record)
+local function font_scale()
+    local v = tonumber(core.settings:get("adm_info_hud_font_scale")) or 1.25
+    return math.max(1, math.min(1.75, v))
+end
+
+local function add_text(player, title, initial, dy, color, bold, size)
+    local pos, offx, alignx = layout()
+    return player:hud_add({
+        type = "text", name = title,
+        position = pos, alignment = {x = alignx, y = 1},
+        offset = {x = offx, y = dy},
+        number = color, style = bold and 1 or 0,
+        size = {x = size, y = 0}, text = initial,
+        z_index = 0,
+    })
+end
+
+local function set_text(player, rec, key, value)
+    local id = rec.ids[key]
+    if id and value ~= rec.text[key] then
+        player:hud_change(id, "text", value)
+        rec.text[key] = value
+    end
+end
+
+local function update_biome(player, rec)
     local pos = player:get_pos()
     if not pos then return end
     local x, y, z = math.floor(pos.x), math.floor(pos.y), math.floor(pos.z)
-    if record.x == x and record.y == y and record.z == z then return end
-    record.x, record.y, record.z = x, y, z
+    if rec.x == x and rec.y == y and rec.z == z then return end
+    rec.x, rec.y, rec.z = x, y, z
     local info = sensor.get_at({x = x, y = y, z = z})
-    local value = hud_text(info)
-    if value ~= record.text then
-        player:hud_change(record.id, "text", value)
-        record.text = value
-    end
+    local label = info and info.name or S("Unknown")
+    if info and info.approximate then label = label .. " ~" end
+    local heat = info and type(info.heat) == "number" and string.format("%.2f", info.heat) or "?"
+    local humidity = info and type(info.humidity) == "number" and string.format("%.2f", info.humidity) or "?"
+    local generator = info and info.generator or "?"
+    set_text(player, rec, "title", S("Biome: @1", label))
+    set_text(player, rec, "details", S("Heat: @1", heat) .. "   " .. S("Humidity: @1", humidity))
+    set_text(player, rec, "source", S("Mapgen: @1", generator))
 end
 
-local function enable_hud(player)
+local function refresh_clock_offset(player)
+    local name = player:get_player_name()
+    local rec = clocks[name]
+    if not rec or not rec.id then return end
+    local _, ox = layout()
+    player:hud_change(rec.id, "offset", {x = ox, y = huds[name] and 78 or 0})
+end
+
+local function enable_biome(player)
     local name = player:get_player_name()
     if huds[name] then return end
-    local id = player:hud_add({
-        type = "text",
-        position = {x = 0, y = 0},
-        offset = {x = 16, y = 84},
-        alignment = {x = 1, y = 1},
-        number = 0xC7EAD8,
-        text = S("Biome: @1", S("Loading")),
-    })
-    if not id then return end
-    huds[name] = {id = id, text = nil}
-    update_hud(player, huds[name])
-end
-
-local function disable_hud(player)
-    local name = player:get_player_name()
-    local record = huds[name]
-    if record then
-        player:hud_remove(record.id)
-        huds[name] = nil
+    local size = font_scale()
+    local ids = {
+        title = add_text(player, "ADM biome", "", 0, 0xDFF9F1, true, size),
+        details = add_text(player, "ADM environment", "", 28, 0xBFE4E1, false, 1),
+        source = add_text(player, "ADM mapgen", "", 49, 0xAEC4CA, false, 1),
+    }
+    if not (ids.title and ids.details and ids.source) then
+        for _, id in pairs(ids) do player:hud_remove(id) end
+        return
     end
+    local rec = {ids = ids, text = {}}
+    huds[name] = rec
+    update_biome(player, rec)
+    refresh_clock_offset(player)
 end
 
--- El seguimiento solo recorre jugadores cuando hay al menos un HUD activo.
-local elapsed = 0
+local function disable_biome(player)
+    local name = player:get_player_name()
+    local rec = huds[name]
+    if not rec then return end
+    for _, id in pairs(rec.ids) do player:hud_remove(id) end
+    huds[name] = nil
+    refresh_clock_offset(player)
+end
+
+local function clock_text()
+    -- get_timeofday(): 0 = medianoche, 0.5 = mediodia.
+    local time = tonumber(core.get_timeofday()) or 0
+    local minute = math.floor((time % 1) * 1440) % 1440
+    return S("Game time: @1", string.format("%02d:%02d", math.floor(minute / 60), minute % 60))
+end
+
+local function enable_clock(player)
+    local name = player:get_player_name()
+    if clocks[name] then return end
+    local id = add_text(player, "ADM game clock", "", huds[name] and 78 or 0,
+                        0xF5D98A, true, font_scale())
+    if not id then return end
+    clocks[name] = {id = id}
+    local value = clock_text()
+    player:hud_change(id, "text", value)
+    clocks[name].text = value
+end
+
+local function disable_clock(player)
+    local name = player:get_player_name()
+    local rec = clocks[name]
+    if rec then player:hud_remove(rec.id) end
+    clocks[name] = nil
+end
+
 core.register_globalstep(function(dt)
-    if not next(huds) then return end
-    elapsed = elapsed + dt
-    if elapsed < 1.5 then return end
-    elapsed = elapsed - math.floor(elapsed / 1.5) * 1.5
-    for name, record in pairs(huds) do
-        local player = core.get_player_by_name(name)
-        if player then update_hud(player, record) end
+    if not next(huds) and not next(clocks) then return end
+    step_elapsed = step_elapsed + dt
+    if step_elapsed < 1 then return end
+    local elapsed = step_elapsed
+    step_elapsed = step_elapsed % 1
+    biome_elapsed = biome_elapsed + elapsed
+    if next(clocks) then
+        local value = clock_text() -- una sola lectura para todos los jugadores
+        for name, rec in pairs(clocks) do
+            if value ~= rec.text then
+                local player = core.get_player_by_name(name)
+                if player then player:hud_change(rec.id, "text", value); rec.text = value end
+            end
+        end
+    end
+    if biome_elapsed >= 2 then
+        biome_elapsed = biome_elapsed % 2
+        for name, rec in pairs(huds) do
+            local player = core.get_player_by_name(name)
+            if player then update_biome(player, rec) end
+        end
     end
 end)
 
 core.register_on_joinplayer(function(player)
-    if player:get_meta():get_string(META_HUD) == "1" then
-        enable_hud(player)
-    end
+    local meta = player:get_meta()
+    if meta:get_string(META_HUD) == "1" then enable_biome(player) end
+    -- Reloj activado inicialmente, salvo que el jugador lo apague.
+    if meta:get_string(META_CLOCK) ~= "0" then enable_clock(player) end
 end)
 
 core.register_on_leaveplayer(function(player)
-    -- El motor destruye los elementos HUD al desconectar al jugador.
-    huds[player:get_player_name()] = nil
+    local name = player:get_player_name()
+    huds[name], clocks[name] = nil, nil
 end)
 
 core.register_chatcommand("bioma", {
@@ -230,11 +322,11 @@ core.register_chatcommand("bioma", {
             local meta = player:get_meta()
             if meta:get_string(META_HUD) == "1" then
                 meta:set_string(META_HUD, "0")
-                disable_hud(player)
+                disable_biome(player)
                 return true, S("Biome HUD disabled")
             end
             meta:set_string(META_HUD, "1")
-            enable_hud(player)
+            enable_biome(player)
             return true, S("Biome HUD enabled")
         end
         if param ~= "" then return false, S("Usage: /bioma [hud]") end
@@ -246,6 +338,30 @@ core.register_chatcommand("bioma", {
         return true, S("Biome: @1", info.name) .. note .. " | " ..
             S("Heat: @1", heat) .. " | " .. S("Humidity: @1", humidity) ..
             " | " .. S("Mapgen: @1", info.generator)
+    end,
+})
+
+core.register_chatcommand("reloj", {
+    params = "[on|off]",
+    description = S("Show or hide the in-game clock"),
+    func = function(name, param)
+        local player = core.get_player_by_name(name)
+        if not player then return false, S("Player not found") end
+        param = (param or ""):match("^%s*(.-)%s*$"):lower()
+        if param ~= "" and param ~= "on" and param ~= "off" then
+            return false, S("Usage: /reloj [on|off]")
+        end
+        local meta = player:get_meta()
+        local enabled = clocks[name] ~= nil
+        local desired = param == "on" or (param == "" and not enabled)
+        if desired then
+            meta:set_string(META_CLOCK, "1")
+            enable_clock(player)
+            return true, S("Clock HUD enabled")
+        end
+        meta:set_string(META_CLOCK, "0")
+        disable_clock(player)
+        return true, S("Clock HUD disabled")
     end,
 })
 

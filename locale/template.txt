@@ -170,3 +170,8 @@ Abre el menú de gestión de rastreadores.=
 @=@=@= ARSENAL CLASIFICADO @=@=@==
 Invoca la Varita de Excavación (Requiere permisos).=
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=
+Game time: @1=
+Show or hide the in-game clock=
+Usage: /reloj [on|off]=
+Clock HUD enabled=
+Clock HUD disabled=

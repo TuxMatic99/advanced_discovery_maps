@@ -170,3 +170,8 @@ Abre el menú de gestión de rastreadores.=Apre il menu di gestione dei tracker.
 @=@=@= ARSENAL CLASIFICADO @=@=@==@=@=@= ARSENALE CLASSIFICATO @=@=@=
 Invoca la Varita de Excavación (Requiere permisos).=Evoca la Bacchetta di Scavo (Richiede permessi).
 Nota: Para activar todos los privilegios en Luanti usa el comando /grant <tu_usuario> all o /grantme all=Nota: Per attivare tutti i privilegi in Luanti usa il comando /grant <tuo_utente> all o /grantme all
+Game time: @1=Ora di gioco: @1
+Show or hide the in-game clock=Mostra o nascondi l’orologio di gioco
+Usage: /reloj [on|off]=Uso: /reloj [on|off]
+Clock HUD enabled=Orologio attivato
+Clock HUD disabled=Orologio disattivato
