@@ -1806,38 +1806,10 @@ minetest.register_chatcommand("map", {
 -- =========================================================
 -- COMANDO: VISIÓN NOCTURNA TÁCTICA
 -- =========================================================
-minetest.register_chatcommand("nv", {
-    description = S("Activa/Desactiva la Visión Nocturna Táctica.\n") ..
-                  S("Uso: /nv\n") ..
-                  S("Emisor adaptativo que ilumina cuevas y zonas submarinas con coste cero."),
-    func = function(name)
-        local player = minetest.get_player_by_name(name)
-        if not player then return false end
-        
-        local data = persistent_map.get_player_data(name)
-        if not data then return false, S("Datos no inicializados.") end
-
-        data.nv_active = not data.nv_active
-
-        if data.nv_active then
-            player:override_day_night_ratio(1.0)
-            minetest.chat_send_player(name, minetest.colorize("#00FF88", S(">> Visión Nocturna: ACTIVADA")))
-        else
-            player:override_day_night_ratio(nil)
-            -- Restaurar el bloque físico al apagar el sistema
-            if data.nv_pos and data.nv_saved_node then
-                local node = minetest.get_node(data.nv_pos)
-                if node.name == "advanced_discovery_maps:nv_beacon" or node.name == "advanced_discovery_maps:nv_beacon_liquid" then
-                    minetest.swap_node(data.nv_pos, data.nv_saved_node)
-                end
-                data.nv_pos = nil
-                data.nv_saved_node = nil
-            end
-            minetest.chat_send_player(name, minetest.colorize("#FF8800", S(">> Visión Nocturna: DESACTIVADA")))
-        end
-        return true
-    end,
-})
+-- P5C-R: comando /nv implementado en modulo seguro.
+-- La antigua limpieza visual de P5C llama este stub; la nueva
+-- limpieza de luz real la realiza adm_funciones_restauradas.lua.
+local function adm_nv_stop() end
 
 -- =========================================================
 -- COMANDO: CONTROL DE PROPULSIÓN (VUELO)
@@ -2212,6 +2184,7 @@ end)
 
 minetest.register_on_leaveplayer(function(player)
     local name = player:get_player_name()
+    adm_nv_stop(player, player_data[name])
     player_data[name] = nil
     map_view_offset[name] = nil
     map_zoom_level[name] = nil
@@ -2221,6 +2194,12 @@ minetest.register_on_leaveplayer(function(player)
     cooldowns_perfil[name] = nil
     
     minetest.log("action", "[persistent_map] Player " .. name .. " left, data and cooldowns cleaned up")
+end)
+
+minetest.register_on_shutdown(function()
+    for _, player in ipairs(minetest.get_connected_players()) do
+        adm_nv_stop(player, player_data[player:get_player_name()])
+    end
 end)
 
 local scan_timer = 0
@@ -2252,44 +2231,8 @@ minetest.register_globalstep(function(dtime)
             data.last_tile_z = tile_z
         end
 
-        -- 2. Lógica del Faro de Visión Nocturna Submarina y Subterránea
-        if data.nv_active then
-            local head_pos = vector.round(pos)
-            head_pos.y = head_pos.y + 1 -- Posicionamos la luz exactamente en la cámara
-            
-            -- Solo actualizamos si el jugador cruzó a un nuevo bloque
-            if not data.nv_pos or not vector.equals(data.nv_pos, head_pos) then
-                
-                -- A) Restaurar el bloque anterior silenciosamente
-                if data.nv_pos and data.nv_saved_node then
-                    local current_old = minetest.get_node(data.nv_pos)
-                    if current_old.name == "advanced_discovery_maps:nv_beacon" or current_old.name == "advanced_discovery_maps:nv_beacon_liquid" then
-                        minetest.swap_node(data.nv_pos, data.nv_saved_node)
-                    end
-                end
-                
-                -- B) Analizar y guardar el nuevo bloque
-                local current_node = minetest.get_node(head_pos)
-                local def = minetest.registered_nodes[current_node.name]
-                
-                -- Solo inyectamos luz si NO es roca sólida (evitamos asfixia)
-                if def and not def.walkable then
-                    data.nv_saved_node = current_node
-                    data.nv_pos = head_pos
-                    
-                    -- Seleccionar el faro correcto (líquido o aire)
-                    local is_liquid = def.liquidtype == "source" or def.liquidtype == "flowing"
-                    local beacon_name = is_liquid and "advanced_discovery_maps:nv_beacon_liquid" or "advanced_discovery_maps:nv_beacon"
-                    
-                    -- swap_node cambia la RAM sin despertar gravedad o fluidos
-                    minetest.swap_node(head_pos, {name = beacon_name, param2 = current_node.param2})
-                else
-                    data.nv_pos = nil
-                    data.nv_saved_node = nil
-                end
-            end
-        end
-
+        -- P5C: la visión nocturna nunca sustituye nodos de aire o agua.
+        -- El propio jugador controla visualmente su luminosidad con /nv.
         end -- P5A: fin de if data, compatible con Lua 5.1
 
     end
@@ -2523,202 +2466,8 @@ minetest.register_globalstep(function(dtime)
 
 end)
 
--- =========================================================
--- ALGORITMO TUXMATIC: EXCAVACIÓN ASÍNCRONA ESTRATIFICADA
--- =========================================================
-local c_air = minetest.get_content_id("air")
-local c_ignore = minetest.get_content_id("ignore")
-
--- Motor 1: Excavación Recursiva por Capas (Para radios > 20)
-local function tuxmatic_async_layer(pos, radius, current_y, player_name)
-    -- Condición de salida: Hemos rebanado toda la esfera hasta la base
-    if current_y < -radius then
-        minetest.chat_send_player(player_name, minetest.colorize("#00FF88", S(">> Excavación Asíncrona completada.")))
-        return
-    end
-
-    local r_sq = radius * radius
-    local y_sq = current_y * current_y
-    local layer_r = math.ceil(math.sqrt(r_sq - y_sq))
-
-    -- Definimos estrictamente el área de esta única rebanada (1 bloque de altura)
-    local minp = vector.new(pos.x - layer_r, pos.y + current_y, pos.z - layer_r)
-    local maxp = vector.new(pos.x + layer_r, pos.y + current_y, pos.z + layer_r)
-
-    local vm = minetest.get_voxel_manip()
-    local emin, emax = vm:read_from_map(minp, maxp)
-    local data = vm:get_data()
-    local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
-
-    local modificado = false
-    for z = -layer_r, layer_r do
-        for x = -layer_r, layer_r do
-            if x*x + y_sq + z*z <= r_sq then
-                local vi = area:index(pos.x + x, pos.y + current_y, pos.z + z)
-                if data[vi] ~= c_ignore and data[vi] ~= c_air then
-                    data[vi] = c_air 
-                    modificado = true
-                end
-            end
-        end
-    end
-
-    if modificado then
-        vm:set_data(data)
-        vm:write_to_map()
-        vm:update_map()
-        vm:update_liquids()
-    end
-
-    -- Efecto visual por capa procesada (Sensación de rayo orbital)
-    if current_y % 3 == 0 then
-        minetest.add_particlespawner({
-            amount = 15, time = 0.2,
-            minpos = minp, maxpos = maxp,
-            minvel = {x=-2, y=2, z=-2}, maxvel = {x=2, y=8, z=2},
-            minexptime = 1, maxexptime = 2,
-            minsize = 15, maxsize = 30,
-            texture = "tnt_smoke.png",
-        })
-    end
-
-    -- El motor cede el control al procesador durante 0.15s antes de la siguiente capa
-    minetest.after(0.15, function()
-        tuxmatic_async_layer(pos, radius, current_y - 1, player_name)
-    end)
-end
-
--- Motor 2: Excavación Sincrónica Instantánea (Para radios <= 20)
-local function tuxmatic_sync_boom(pos, radius)
-    local r = radius
-    local minp = vector.new(pos.x - r, pos.y - r, pos.z - r)
-    local maxp = vector.new(pos.x + r, pos.y + r, pos.z + r)
-
-    local vm = minetest.get_voxel_manip()
-    local emin, emax = vm:read_from_map(minp, maxp)
-    local data = vm:get_data()
-    local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
-
-    for z = -r, r do
-        for y = -r, r do
-            for x = -r, r do
-                if x*x + y*y + z*z <= r*r then
-                    local vi = area:index(pos.x + x, pos.y + y, pos.z + z)
-                    if data[vi] ~= c_ignore then
-                        data[vi] = c_air 
-                    end
-                end
-            end
-        end
-    end
-
-    vm:set_data(data)
-    vm:write_to_map()
-    vm:update_map()
-    vm:update_liquids()
-
-    minetest.add_particlespawner({
-        amount = r * 5, time = 0.5,
-        minpos = minp, maxpos = maxp,
-        minvel = {x=-5, y=0, z=-5}, maxvel = {x=5, y=5, z=5},
-        minexptime = 1, maxexptime = 2,
-        minsize = 10, maxsize = 25,
-        texture = "tnt_smoke.png",
-    })
-end
-
--- Enrutador de Destrucción
-local function tuxmatic_boom(pos, radius, player_name)
-    -- P5A: cerrada por defecto: VoxelManip evita callbacks y protecciones.
-    -- Solo administradores pueden habilitar explícitamente la versión antigua.
-    if not minetest.settings:get_bool("adm_unsafe_wand_enabled", false) then
-        minetest.chat_send_player(player_name,
-            S("Excavation wand temporarily disabled for world protection."))
-        return
-    end
-    if not minetest.check_player_privs(player_name, {server = true}) then
-        minetest.chat_send_player(player_name,
-            S("Only a server administrator can use the experimental wand."))
-        return
-    end
-    local tiempo_actual = os.time()
-    
-    if cooldowns_perfil[player_name] and tiempo_actual < cooldowns_perfil[player_name] then
-        local restante = cooldowns_perfil[player_name] - tiempo_actual
-        minetest.chat_send_player(player_name, minetest.colorize("#ff0000", S("La varita se está enfriando. Espera @1 segundos.", restante)))
-        return
-    end
-
-    -- Tiempo de enfriamiento dinámico: Escala según la ambición del radio
-    local cooldown = radius <= 20 and 3 or math.ceil(radius * 0.4)
-    cooldowns_perfil[player_name] = tiempo_actual + cooldown
-
-    local r = math.min(math.max(radius, 1), 100) 
-
-    minetest.sound_play("tnt_explode", {pos = pos, gain = 2.0, max_hear_distance = 128}, true)
-
-    if r <= 20 then
-        tuxmatic_sync_boom(pos, r)
-    else
-        minetest.chat_send_player(player_name, minetest.colorize("#00D8FF", S(">> Iniciando Excavación Asíncrona (Radio @1). Descendiendo...", r)))
-        tuxmatic_async_layer(pos, r, r, player_name) -- Comienza a destruir desde el techo de la esfera
-    end
-end
-
--- =========================================================
--- HERRAMIENTA: VARITA DE EXCAVACIÓN TÁCTICA CON INTERFAZ
--- =========================================================
-minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname ~= "advanced_discovery_maps:wand_gui" then return end
-    
-    local item = player:get_wielded_item()
-    if item:get_name() ~= "advanced_discovery_maps:tuxmatic_wand" then return end
-    
-    if fields.radius then
-        local new_radius = tonumber(fields.radius)
-        if new_radius then
-            new_radius = math.min(math.max(new_radius, 1), 100)
-            local meta = item:get_meta()
-            meta:set_int("radius", new_radius)
-            player:set_wielded_item(item)
-            minetest.chat_send_player(player:get_player_name(), minetest.colorize("#00FF88", S(">> Radio de excavación ajustado a @1 bloques.", new_radius)))
-        end
-    end
-end)
-
-local function open_wand_gui(itemstack, user, pointed_thing)
-    local meta = itemstack:get_meta()
-    local current_radius = meta:get_int("radius")
-    if current_radius == 0 then current_radius = 5 end
-    
-    local formspec = "size[4.5,3.5]" ..
-                     "bgcolor[#000000CC;true]" ..
-                     "label[0.5,0.5;" .. S("Calibrar Varita Tuxmatic") .. "]" ..
-                     "field[1,1.8;3,1;radius;" .. S("Radio de Destrucción (1-100)") .. ";" .. current_radius .. "]" ..
-                     "button[1.2,2.6;2,1;save;" .. S("Guardar") .. "]"
-                     
-    minetest.show_formspec(user:get_player_name(), "advanced_discovery_maps:wand_gui", formspec)
-    return itemstack
-end
-
-minetest.register_tool("advanced_discovery_maps:tuxmatic_wand", {
-    description = S("Varita de Excavación (Tuxmatic)\nClic Izq: Destruye geología (Hasta R=100).\nClic Der: Configura el radio."),
-    inventory_image = "default_stick.png^[colorize:#FF3030:120",
-    range = 25,
-    groups = {not_in_creative_inventory = 0},
-    on_use = function(itemstack, user, pointed_thing)
-        if pointed_thing.type == "node" then
-            local meta = itemstack:get_meta()
-            local radius = meta:get_int("radius")
-            if radius == 0 then radius = 5 end
-            
-            tuxmatic_boom(pointed_thing.under, radius, user:get_player_name()) 
-        end
-    end,
-    on_place = open_wand_gui,
-    on_secondary_use = open_wand_gui,
-})
-
+-- P5C-R: excavacion protegida y vision nocturna real recuperable.
+dofile(modpath .. "/adm_funciones_restauradas.lua")
 
 -- ADM-FASE4-MEDIA: registro de medios listo antes del Atlas y del HUD.
 dofile(modpath .. "/map_media.lua")
