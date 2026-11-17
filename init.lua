@@ -723,14 +723,22 @@ local function add_discovered_tile(player_name, tile_x, tile_z, callback)
 	
 	generate_tile(tile_x, tile_z, function(id)
 		minetest.log("action", "[persistent_map] Generated tile: " .. id .. " for " .. player_name)
-		local filename = map_path .. tile_id .. ".png"
-		minetest.dynamic_add_media({
-			filepath = filename,
-			to_player = player_name,
-		}, function(pname)
-			if persistent_map.media_mark_ready then persistent_map.media_mark_ready(pname, tile_id .. ".png") end
+		-- P5B: entregar la capa estándar solo al explorador. Si la cola
+		-- de medios está llena, el HUD/Atlas volverá a solicitarla.
+		if minetest.settings:get_bool("adm_lazy_media", true)
+		        and persistent_map.media_request then
+			persistent_map.media_request(player_name, tile_id .. ".png")
 			if callback then callback() end
-		end)
+		else
+			local filename = map_path .. tile_id .. ".png"
+			minetest.dynamic_add_media({filepath = filename, to_player = player_name},
+			    function(pname)
+			        if persistent_map.media_mark_ready then
+			            persistent_map.media_mark_ready(pname, tile_id .. ".png")
+			        end
+			        if callback then callback() end
+			    end)
+		end
 	end)
 	
 	return true
@@ -2129,6 +2137,12 @@ minetest.register_on_joinplayer(function(player)
 	
 	minetest.log("action", "[persistent_map] Player " .. name .. " joined with " .. tile_count .. " discovered tiles and " .. marker_count .. " markers")
 	
+	-- P5B: no transferir todo el atlas al entrar; el HUD y el
+	-- formulario pedirán solo los PNG visibles. El modo antiguo
+	-- queda disponible para recuperar compatibilidad.
+	if not (minetest.settings:get_bool("adm_lazy_media", true)
+	        and persistent_map.media_request
+	        and minetest.settings:get_bool("adm_ui_modern", true)) then
 	for tile_id, _ in pairs(tiles) do
 		local version = persistent_map.tile_versions and persistent_map.tile_versions[tile_id] or 0
 		local file_id = version > 0 and (tile_id .. "_v" .. version) or tile_id
@@ -2176,7 +2190,8 @@ minetest.register_on_joinplayer(function(player)
 			minetest.log("warning", "[persistent_map] Tile file not found: " .. tile_id .. " for player " .. name)
 		end
 	end
-	
+		end
+
 	minetest.after(persistent_map.generation.initial_discovery_delay, function()
 		local pos = player:get_pos()
 		if pos then

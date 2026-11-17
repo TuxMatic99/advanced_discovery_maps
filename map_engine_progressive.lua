@@ -402,6 +402,9 @@ local function generate_tile(tile_x, tile_z, callback)
             end
         end
 
+        -- P5B: los PNG quedan guardados en disco, pero no se difunden
+        -- indiscriminadamente a todos los clientes.
+        if not minetest.settings:get_bool("adm_lazy_media", true) then
         -- Cada capa se envía independientemente y se registra al confirmar
         -- la entrega. Si una capa falla, las otras siguen funcionando.
         local media = {
@@ -420,6 +423,7 @@ local function generate_tile(tile_x, tile_z, callback)
             if not ok then
                 minetest.log("error", "[ADM] Media " .. filename .. ": " .. tostring(err))
             end
+        end
         end
         end -- process_next_stripe
         process_next_stripe()

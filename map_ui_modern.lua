@@ -4,6 +4,9 @@ local core = minetest
 local P = persistent_map
 local S = core.get_translator(core.get_current_modname())
 local esc = core.formspec_escape
+-- P5B: solo repintar el formulario cuando recibe medios o espera más.
+local atlas_sessions = {}
+local atlas_tick = 0
 local fmt = string.format
 local abs, floor, ceil, min, max = math.abs, math.floor, math.ceil, math.min, math.max
 
@@ -77,6 +80,7 @@ function P.show_map(player_name)
     local mode = P.player_map_mode[player_name] or "standard"
     local suffix = mode == "relief" and "_relief" or mode == "cave" and "_cave" or ""
     local out = {}
+    local waiting_media = false
 
     add(out, "formspec_version[6]")
     add(out, fmt("size[%.2f,%.2f]", W, H))
@@ -125,6 +129,7 @@ function P.show_map(player_name)
                         if f and P.media_request(player_name, file_base .. ".png") then
                             add(out, fmt("image_button[%.3f,%.3f;%.3f,%.3f;%s.png;map_click_%d_%d;;false;false]", x, y, tile_px, tile_px, file_base, tx, tz))
                         else
+                            if f then waiting_media = true end
                             add(out, fmt("box[%.3f,%.3f;%.3f,%.3f;%s]", x, y, tile_px, tile_px, theme.missing))
                         end
                     end
@@ -252,7 +257,46 @@ function P.show_map(player_name)
         esc(fmt("%s %d  |  %s %d", S("Visible"), visible, S("Markers"), marks))))
     add(out, fmt("label[%.2f,%.2f;%s]", W - 3.3, H - .40, esc(fmt("%s: %s", S("Layer"), mode_name))))
 
+    local session = atlas_sessions[player_name] or {}
+    session.epoch = P.media_epoch and P.media_epoch(player_name) or 0
+    session.waiting = waiting_media
+    session.elapsed = 0
+    atlas_sessions[player_name] = session
     core.show_formspec(player_name, "persistent_map:map", table.concat(out))
 end
+
+-- P5B: la descarga de imágenes no debe abrir un formulario cerrado ni
+-- interrumpir la edición de marcadores o la ventana de equipos.
+core.register_on_player_receive_fields(function(player, formname, fields)
+    if formname ~= "persistent_map:map" then return end
+    if fields.quit or fields.adm_walk_switch or fields.manage_markers
+            or fields.party_gui or fields.perfil_x or fields.perfil_z then
+        atlas_sessions[player:get_player_name()] = nil
+    end
+end)
+core.register_on_leaveplayer(function(player)
+    atlas_sessions[player:get_player_name()] = nil
+end)
+
+-- La interfaz no realiza trabajo por fotograma. Se revisa dos veces por
+-- segundo como máximo y se repinta solo por nuevos medios o para reintentos.
+core.register_globalstep(function(dt)
+    if not next(atlas_sessions) then return end
+    atlas_tick = atlas_tick + dt
+    if atlas_tick < 0.5 then return end
+    local elapsed = atlas_tick
+    atlas_tick = 0
+    for name, state in pairs(atlas_sessions) do
+        if not core.get_player_by_name(name) then
+            atlas_sessions[name] = nil
+        else
+            state.elapsed = (state.elapsed or 0) + elapsed
+            local epoch = P.media_epoch and P.media_epoch(name) or 0
+            if epoch ~= state.epoch or (state.waiting and state.elapsed >= 1.5) then
+                P.show_map(name)
+            end
+        end
+    end
+end)
 
 core.log("action", "[advanced_discovery_maps] Modern Atlas UI enabled")
