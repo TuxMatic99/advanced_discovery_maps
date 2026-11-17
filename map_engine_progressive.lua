@@ -62,7 +62,26 @@ local function generate_tile(tile_x, tile_z, callback)
         local c_ignore = minetest.get_content_id("ignore")
 
         local color_cache_local = {}
-        local is_liquid_cache = {}
+        -- Cada Content ID se clasifica una sola vez por cuadrante.
+        -- Evita buscar grupos y definiciones miles de veces al atravesar hojas,
+        -- vegetacion y columnas de liquidos, sin alterar ningun color.
+        local traits_cache = {}
+        local function traits_for(cid)
+            local traits = traits_cache[cid]
+            if traits then return traits end
+            local node_name = minetest.get_name_from_content_id(cid)
+            local def = minetest.registered_nodes[node_name]
+            local groups = def and def.groups
+            traits = {
+                vegetation = not not (groups and
+                    (groups.leaves or groups.tree or groups.flora or groups.plant or groups.wood)),
+                liquid = not not (def and
+                    (def.drawtype == "liquid" or def.drawtype == "flowingliquid" or
+                    (groups and (groups.water or groups.lava)))),
+            }
+            traits_cache[cid] = traits
+            return traits
+        end
 
         local pixels_std = {}
         local pixels_rel = {}
@@ -80,9 +99,11 @@ local function generate_tile(tile_x, tile_z, callback)
         local max_y, min_y = maxp.y, minp.y
 
         local pixel_index = 1
-        local heightmap_norte = {}
-        local heightmap_cave_norte = {}
-        local heightmap_visual_norte = {}
+        -- Dos filas por mapa. Se alternan sin crear tres tablas por fila.
+        -- Las 128 posiciones se reescriben por completo antes de cada intercambio.
+        local heightmap_norte, heightmap_actual = {}, {}
+        local heightmap_cave_norte, heightmap_cave_actual = {}, {}
+        local heightmap_visual_norte, heightmap_visual_actual = {}, {}
 
         -- El bucle de filas original se conserva: solo cambia la adquisicion de datos.
         local row_start = 0
@@ -103,10 +124,6 @@ local function generate_tile(tile_x, tile_z, callback)
             adm_read_us = adm_read_us + stripe_tread - stripe_t0
             for img_y = row_start, row_last do
             local world_z = max_z - img_y
-            local heightmap_actual = {}
-            local heightmap_cave_actual = {}
-            local heightmap_visual_actual = {}
-
             for img_x = 0, tile_size - 1 do
                 local world_x = min_x + img_x
 
@@ -142,19 +159,12 @@ local function generate_tile(tile_x, tile_z, callback)
                             end
 
                             if not ground_surface_y then
-                                local node_name = minetest.get_name_from_content_id(cid)
-                                local def = minetest.registered_nodes[node_name]
-                                local is_veg = def and def.groups and (def.groups.leaves or def.groups.tree or def.groups.flora or def.groups.plant or def.groups.wood)
-
-                                if not is_veg then
+                                local traits = traits_for(cid)
+                                if not traits.vegetation then
                                     ground_surface_y = y
                                     cid_ground = cid
 
-                                    if is_liquid_cache[cid] == nil then
-                                        is_liquid_cache[cid] = def and (def.drawtype == "liquid" or def.drawtype == "flowingliquid" or (def.groups and (def.groups.water or def.groups.lava))) or false
-                                    end
-
-                                    if is_liquid_cache[cid] then
+                                    if traits.liquid then
                                         state = "liquid"
                                         in_liquid = true
                                     else
@@ -166,12 +176,7 @@ local function generate_tile(tile_x, tile_z, callback)
                         end
                     elseif state == "liquid" then
                         if cid ~= c_air and cid ~= c_ignore then
-                            if is_liquid_cache[cid] == nil then
-                                local node_name = minetest.get_name_from_content_id(cid)
-                                local def = minetest.registered_nodes[node_name]
-                                is_liquid_cache[cid] = def and (def.drawtype == "liquid" or def.drawtype == "flowingliquid" or (def.groups and (def.groups.water or def.groups.lava))) or false
-                            end
-                            if not is_liquid_cache[cid] then
+                            if not traits_for(cid).liquid then
                                 solid_y = y
                                 liquid_depth = ground_surface_y - solid_y
                                 state = "cave_scan"
@@ -343,9 +348,9 @@ local function generate_tile(tile_x, tile_z, callback)
 
                 pixel_index = pixel_index + 1
             end
-            heightmap_norte = heightmap_actual
-            heightmap_cave_norte = heightmap_cave_actual
-            heightmap_visual_norte = heightmap_visual_actual
+            heightmap_norte, heightmap_actual = heightmap_actual, heightmap_norte
+            heightmap_cave_norte, heightmap_cave_actual = heightmap_cave_actual, heightmap_cave_norte
+            heightmap_visual_norte, heightmap_visual_actual = heightmap_visual_actual, heightmap_visual_norte
             end
             local stripe_tdone = minetest.get_us_time()
             adm_stripes = adm_stripes + 1

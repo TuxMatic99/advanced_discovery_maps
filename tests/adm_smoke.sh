@@ -15,6 +15,10 @@ if command -v texlua >/dev/null 2>&1; then
     texlua tests/test_adm_p5c_runtime.lua .
     texlua tests/test_adm_wand_v2.lua .
     texlua tests/test_adm_wand_v3.lua .
+    reference="$(mktemp)"
+    git show 4d08663:map_engine_progressive.lua > "$reference"
+    texlua tests/test_adm_p7a_equivalence.lua "$reference" map_engine_progressive.lua
+    rm -f "$reference"
 else
     echo 'AVISO: texlua no está instalado; se omiten pruebas Lua simuladas.'
 fi
