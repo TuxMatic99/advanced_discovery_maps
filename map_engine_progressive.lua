@@ -22,7 +22,8 @@ local function generate_tile(tile_x, tile_z, callback)
         return base_id
     end
 
-    if tile_exists(tile_id) then
+    if tile_exists(tile_id) and tile_exists(tile_id .. "_relief")
+            and tile_exists(tile_id .. "_cave") then
         if callback then callback(base_id) end
         return base_id
     end
@@ -366,9 +367,16 @@ local function generate_tile(tile_x, tile_z, callback)
         local png_rel = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_rel))
         local png_cave = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_cave))
 
-        minetest.safe_file_write(filename_std, png_std)
-        minetest.safe_file_write(filename_rel, png_rel)
-        minetest.safe_file_write(filename_cave, png_cave)
+        local ok_std = minetest.safe_file_write(filename_std, png_std)
+        local ok_rel = minetest.safe_file_write(filename_rel, png_rel)
+        local ok_cave = minetest.safe_file_write(filename_cave, png_cave)
+        if not (ok_std and ok_rel and ok_cave) then
+            minetest.log("error", "[ADM] Could not save every map layer: " .. tile_id)
+            pending[tile_id] = nil
+            queue_busy = false
+            minetest.after(0.025, start_next_job)
+            return
+        end
 
         if adm_profile then
             local done_us = minetest.get_us_time()
@@ -383,21 +391,36 @@ local function generate_tile(tile_x, tile_z, callback)
         queue_busy = false
         minetest.after(0.025, start_next_job)
 
-        minetest.dynamic_add_media({filepath = filename_std}, function(player_name)
-            if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. ".png") end
-            minetest.dynamic_add_media({filepath = filename_rel}, function(player_name)
-                if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. "_relief.png") end
-                minetest.dynamic_add_media({filepath = filename_cave}, function(player_name)
-                    if persistent_map.media_mark_ready then persistent_map.media_mark_ready(player_name, tile_id .. "_cave.png") end
-                    local listeners = pending[tile_id] or {}
-                    pending[tile_id] = nil
-                    for _, listener in ipairs(listeners) do
-                        local ok, err = pcall(listener, base_id)
-                        if not ok then minetest.log("error", "[ADM] Callback: " .. tostring(err)) end
+        -- Los callbacks de creación representan PNG guardados, no confirmaciones
+        -- de descarga. Una conexión perdida no debe atascar pending[tile_id].
+        local listeners = pending[tile_id] or {}
+        pending[tile_id] = nil
+        for _, listener in ipairs(listeners) do
+            local ok, err = pcall(listener, base_id)
+            if not ok then
+                minetest.log("error", "[ADM] Callback de cuadrante: " .. tostring(err))
+            end
+        end
+
+        -- Cada capa se envía independientemente y se registra al confirmar
+        -- la entrega. Si una capa falla, las otras siguen funcionando.
+        local media = {
+            {filename_std, tile_id .. ".png"},
+            {filename_rel, tile_id .. "_relief.png"},
+            {filename_cave, tile_id .. "_cave.png"},
+        }
+        for _, entry in ipairs(media) do
+            local path, filename = entry[1], entry[2]
+            local ok, err = pcall(minetest.dynamic_add_media,
+                {filepath = path}, function(player_name)
+                    if persistent_map.media_mark_ready then
+                        persistent_map.media_mark_ready(player_name, filename)
                     end
                 end)
-            end)
-        end)
+            if not ok then
+                minetest.log("error", "[ADM] Media " .. filename .. ": " .. tostring(err))
+            end
+        end
         end -- process_next_stripe
         process_next_stripe()
     end) -- minetest.after

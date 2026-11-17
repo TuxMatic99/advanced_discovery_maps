@@ -96,6 +96,24 @@ function P.media_request(name, filename)
     return false
 end
 
+-- P5A: recuperación de transferencias atascadas, sin sondear cada fotograma.
+local housekeeping_elapsed = 0
+core.register_globalstep(function(dt)
+    housekeeping_elapsed = housekeeping_elapsed + dt
+    if housekeeping_elapsed < 1 then return end
+    housekeeping_elapsed = 0
+    local t = now()
+    for _, session in pairs(sessions) do
+        for _, record in pairs(session.files) do
+            if record.status == "pending" and t - record.since > TIMEOUT_US then
+                session.inflight = math.max(0, session.inflight - 1)
+                record.status = "retry"
+                record.retry_at = t + RETRY_US
+            end
+        end
+    end
+end)
+
 core.register_on_leaveplayer(function(player)
     sessions[player:get_player_name()] = nil
 end)

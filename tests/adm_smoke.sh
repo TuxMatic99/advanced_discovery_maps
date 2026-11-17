@@ -9,6 +9,7 @@ if command -v texlua >/dev/null 2>&1; then
     printf 'fixture' > "$tmp/tile_0_1.png"
     texlua tests/adm_luasyntax.lua .
     texlua tests/test_adm_media.lua . "$tmp"
+    texlua tests/test_adm_p5a_timeout.lua . "$tmp"
 else
     echo 'AVISO: texlua no está instalado; se omiten pruebas Lua simuladas.'
 fi

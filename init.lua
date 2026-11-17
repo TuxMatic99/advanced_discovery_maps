@@ -2218,7 +2218,7 @@ minetest.register_globalstep(function(dtime)
         local name = player:get_player_name()
         local data = player_data[name]
         
-        if not data then goto continue end
+        if data then
         
         local pos = player:get_pos()
         local tile_x, tile_z = pos_to_tile_coords(pos)
@@ -2228,10 +2228,13 @@ minetest.register_globalstep(function(dtime)
             local discovered = add_discovered_tile(name, tile_x, tile_z, function()
                 minetest.chat_send_player(name, S("New area discovered!"))
             end)
-            if discovered then
-                data.last_tile_x = tile_x
-                data.last_tile_z = tile_z
+            if not discovered then
+                -- Puede faltar un PNG si el servidor se cerró durante su creación.
+                -- El motor progresivo comprobará las tres capas y solo reparará lo necesario.
+                generate_tile(tile_x, tile_z)
             end
+            data.last_tile_x = tile_x
+            data.last_tile_z = tile_z
         end
 
         -- 2. Lógica del Faro de Visión Nocturna Submarina y Subterránea
@@ -2272,33 +2275,8 @@ minetest.register_globalstep(function(dtime)
             end
         end
 
-        -- 3. Lógica de Velocidad de Vuelo (Coste de RAM Cero)
-        local target_speed = data.target_flyspeed
-        -- Evaluamos solo si el jugador alteró su velocidad o reinició el comando
-        if target_speed and target_speed ~= 1 or data.fly_state == nil then
-            
-            -- Reutilizamos el vector 'pos' modificando solo el eje Y matemáticamente
-            local original_y = pos.y
-            pos.y = math.floor(original_y)
-            local node_at = minetest.get_node(pos).name
-            
-            pos.y = pos.y - 1
-            local node_below = minetest.get_node(pos).name
-            pos.y = original_y -- Restauramos el vector a su estado original
-            
-            local is_flying = (node_below == "air" and node_at == "air")
-            
-            -- Solo inyectamos físicas si el estado ha CAMBIADO
-            if is_flying and data.fly_state ~= "flying" then
-                player:set_physics_override({ speed = target_speed })
-                data.fly_state = "flying"
-            elseif not is_flying and data.fly_state ~= "ground" then
-                player:set_physics_override({ speed = 1 })
-                data.fly_state = "ground"
-            end
-        end
-        
-        ::continue::
+        end -- P5A: fin de if data, compatible con Lua 5.1
+
     end
 end)
 
@@ -2636,6 +2614,18 @@ end
 
 -- Enrutador de Destrucción
 local function tuxmatic_boom(pos, radius, player_name)
+    -- P5A: cerrada por defecto: VoxelManip evita callbacks y protecciones.
+    -- Solo administradores pueden habilitar explícitamente la versión antigua.
+    if not minetest.settings:get_bool("adm_unsafe_wand_enabled", false) then
+        minetest.chat_send_player(player_name,
+            S("Excavation wand temporarily disabled for world protection."))
+        return
+    end
+    if not minetest.check_player_privs(player_name, {server = true}) then
+        minetest.chat_send_player(player_name,
+            S("Only a server administrator can use the experimental wand."))
+        return
+    end
     local tiempo_actual = os.time()
     
     if cooldowns_perfil[player_name] and tiempo_actual < cooldowns_perfil[player_name] then
