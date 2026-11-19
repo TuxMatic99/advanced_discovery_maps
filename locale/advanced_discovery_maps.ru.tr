@@ -175,3 +175,33 @@ Show or hide the in-game clock=Показать или скрыть игровы
 Usage: /reloj [on|off]=Использование: /reloj [on|off]
 Clock HUD enabled=Часы включены
 Clock HUD disabled=Часы выключены
+Topography=Топография
+
+# P7-B2: Navegación y medición
+MAP NAVIGATION AND RULER=НАВИГАЦИЯ И ЛИНЕЙКА КАРТЫ
+Jump to world coordinates X / Z (no teleport)=Перейти к координатам мира X/Z (без телепортации)
+Center map=Центрировать карту
+Center marker=Центрировать метку
+DISTANCE BETWEEN TWO POINTS (horizontal X/Z)=РАССТОЯНИЕ МЕЖДУ ДВУМЯ ТОЧКАМИ (по X/Z)
+Point A=Точка A
+Point B=Точка B
+Me=Я
+Marker=Метка
+Map=Карта
+Measurement unit=Единица измерения
+Measure=Измерить
+Clear=Очистить
+Bearing=Азимут
+Choose both points A and B.=Выберите точки A и B.
+A map click selects the tile center. Enter X/Z for precise measurement.=Щелчок выбирает центр сектора. Для точного измерения введите X/Z.
+One tile=Один сектор
+One block @= one meter (convention).=Один блок @= один метр (условно).
+Back to Atlas=Назад к атласу
+Open Atlas ruler and navigation=Открыть линейку и навигацию атласа
+Map selection uses the center of its quadrant.=Выбран центр сектора.
+Click a discovered tile in the Atlas.=Щёлкните изученный сектор атласа.
+First select a marker in the Atlas.=Сначала выберите метку в атласе.
+Invalid coordinates.=Неверные координаты.
+Map Tools=Инструменты карты
+Walk=Ходить
+Click map tiles to center=Нажмите на сектор, чтобы центрировать

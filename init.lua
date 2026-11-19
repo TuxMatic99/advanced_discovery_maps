@@ -686,6 +686,15 @@ local function generate_tile(tile_x, tile_z, callback)
     return base_id
 end
 
+-- ADM-P7B1: estilo topografico optativo, sin cargarlo para usuarios clasicos.
+-- Requiere Atlas moderno y generador progresivo.
+persistent_map.topo_enabled = minetest.settings:get_bool("adm_topo_enabled", false)
+    and minetest.settings:get_bool("adm_progressive_tiles", false)
+    and minetest.settings:get_bool("adm_ui_modern", false)
+if persistent_map.topo_enabled then
+    persistent_map.topo_renderer = dofile(modpath .. "/map_topography.lua")
+end
+
 -- ADM-FASE3-ENTRY: atlas y procesamiento progresivo
 -- El generador antiguo permanece disponible si la prueba revela diferencias.
 if minetest.settings:get_bool("adm_progressive_tiles", false) then
@@ -2031,6 +2040,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
             persistent_map.player_map_mode[name] = "relief"
         elseif current_mode == "relief" then
             persistent_map.player_map_mode[name] = "cave"
+        elseif current_mode == "cave" and persistent_map.topo_enabled then
+            persistent_map.player_map_mode[name] = "topo"
         else
             persistent_map.player_map_mode[name] = "standard"
         end
@@ -2481,3 +2492,6 @@ end
 if minetest.settings:get_bool("adm_walkmap_enabled", true) then
     dofile(modpath .. "/map_walk.lua")
 end
+
+-- P7-B2: navegación directa y regla cartográfica.
+dofile(modpath .. "/map_navigation_tools.lua")

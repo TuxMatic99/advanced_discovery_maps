@@ -10,7 +10,7 @@ return function(persistent_map, get_tile_id, tile_exists, get_node_color, map_pa
         queue_busy = true
         job()
     end
-local function generate_tile(tile_x, tile_z, callback)
+local function generate_tile(tile_x, tile_z, callback, force_topo)
     local base_id = get_tile_id(tile_x, tile_z)
     local version = persistent_map.tile_versions and persistent_map.tile_versions[base_id] or 0
     local tile_id = version > 0 and (base_id .. "_v" .. version) or base_id
@@ -22,8 +22,13 @@ local function generate_tile(tile_x, tile_z, callback)
         return base_id
     end
 
-    if tile_exists(tile_id) and tile_exists(tile_id .. "_relief")
-            and tile_exists(tile_id .. "_cave") then
+    -- La cuarta capa solo se crea por peticion explicita del Atlas.
+    -- No reescribe ninguno de los PNG que ya pudo recibir un cliente.
+    local classic_exists = tile_exists(tile_id) and tile_exists(tile_id .. "_relief")
+        and tile_exists(tile_id .. "_cave")
+    local make_topo = force_topo and persistent_map.topo_enabled
+        and not tile_exists(tile_id .. "_topo1")
+    if classic_exists and not make_topo then
         if callback then callback(base_id) end
         return base_id
     end
@@ -78,6 +83,8 @@ local function generate_tile(tile_x, tile_z, callback)
                 liquid = not not (def and
                     (def.drawtype == "liquid" or def.drawtype == "flowingliquid" or
                     (groups and (groups.water or groups.lava)))),
+                water = not not (groups and groups.water),
+                lava = not not (groups and groups.lava),
             }
             traits_cache[cid] = traits
             return traits
@@ -86,6 +93,12 @@ local function generate_tile(tile_x, tile_z, callback)
         local pixels_std = {}
         local pixels_rel = {}
         local pixels_cave = {}
+        -- El estilo opcional reutiliza alturas del mismo escaneo: cero lecturas extra
+        -- para cuadrantes aun no generados y sin calculos si esta desactivado.
+        local topo_pixel = make_topo and persistent_map.topo_renderer
+            and persistent_map.topo_renderer.new_renderer(
+                minetest.settings:get("adm_topo_contour_interval")) or nil
+        local pixels_topo = topo_pixel and {} or nil
         local pixel_count = persistent_map.tile_size * persistent_map.tile_size
 
         for i = 1, pixel_count do
@@ -345,6 +358,15 @@ local function generate_tile(tile_x, tile_z, callback)
                 cg = math.min(255, math.floor(cg * cave_shadow))
                 cb = math.min(255, math.floor(cb * cave_shadow))
                 pixels_cave[pixel_index] = string.char(cr, cg, cb, persistent_map.generation.alpha_value)
+                if pixels_topo then
+                    local liquid_group = in_liquid and traits_for(cid_ground) or nil
+                    local is_water = liquid_group and liquid_group.water or false
+                    local is_lava = liquid_group and liquid_group.lava or false
+                    pixels_topo[pixel_index] = topo_pixel(solid_y or min_y,
+                        heightmap_norte[img_x], heightmap_actual[img_x-1],
+                        is_water, liquid_depth, is_lava,
+                        cid_ground ~= c_air and cid_ground ~= c_ignore)
+                end
 
                 pixel_index = pixel_index + 1
             end
@@ -368,14 +390,22 @@ local function generate_tile(tile_x, tile_z, callback)
         local filename_rel = persistent_map.map_path .. tile_id .. "_relief.png"
         local filename_cave = persistent_map.map_path .. tile_id .. "_cave.png"
 
-        local png_std = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_std))
-        local png_rel = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_rel))
-        local png_cave = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_cave))
-
-        local ok_std = minetest.safe_file_write(filename_std, png_std)
-        local ok_rel = minetest.safe_file_write(filename_rel, png_rel)
-        local ok_cave = minetest.safe_file_write(filename_cave, png_cave)
-        if not (ok_std and ok_rel and ok_cave) then
+        local ok_std, ok_rel, ok_cave, ok_topo = true, true, true, true
+        if not classic_exists then
+            local png_std = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_std))
+            local png_rel = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_rel))
+            local png_cave = minetest.encode_png(persistent_map.tile_size, persistent_map.tile_size, table.concat(pixels_cave))
+            ok_std = minetest.safe_file_write(filename_std, png_std)
+            ok_rel = minetest.safe_file_write(filename_rel, png_rel)
+            ok_cave = minetest.safe_file_write(filename_cave, png_cave)
+        end
+        if pixels_topo then
+            local png_topo = minetest.encode_png(persistent_map.tile_size,
+                persistent_map.tile_size, table.concat(pixels_topo))
+            ok_topo = minetest.safe_file_write(
+                persistent_map.map_path .. tile_id .. "_topo1.png", png_topo)
+        end
+        if not (ok_std and ok_rel and ok_cave and ok_topo) then
             minetest.log("error", "[ADM] Could not save every map layer: " .. tile_id)
             pending[tile_id] = nil
             queue_busy = false
@@ -438,5 +468,27 @@ local function generate_tile(tile_x, tile_z, callback)
     start_next_job()
     return base_id
 end
+-- Una sola solicitud adicional, y solo si alguien abre la vista topografica.
+    local topo_busy, topo_ticket, topo_started_us = nil, 0, 0
+    persistent_map.request_topo_tile = function(tile_x, tile_z)
+        if not persistent_map.topo_enabled then return false end
+        local now_us = minetest.get_us_time()
+        if topo_busy then
+            if now_us - topo_started_us < 90000000 then return false end
+            topo_busy = nil -- El trabajo previo no informo finalizacion.
+        end
+        local id = get_tile_id(tile_x, tile_z)
+        local ver = persistent_map.tile_versions and persistent_map.tile_versions[id] or 0
+        local file = ver > 0 and (id .. "_v" .. ver) or id
+        if tile_exists(file .. "_topo1") then return true end
+        topo_ticket = topo_ticket + 1
+        local ticket = topo_ticket
+        topo_busy = ticket
+        topo_started_us = now_us
+        generate_tile(tile_x, tile_z, function()
+            if topo_busy == ticket then topo_busy = nil end
+        end, true)
+        return true
+    end
 return generate_tile
 end

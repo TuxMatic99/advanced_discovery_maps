@@ -175,3 +175,33 @@ Show or hide the in-game clock=ゲーム内時計を表示または非表示に�
 Usage: /reloj [on|off]=使用法: /reloj [on|off]
 Clock HUD enabled=時計を表示しました
 Clock HUD disabled=時計を非表示にしました
+Topography=地形図
+
+# P7-B2: Navegación y medición
+MAP NAVIGATION AND RULER=地図のナビゲーションと定規
+Jump to world coordinates X / Z (no teleport)=ワールド座標 X/Z に移動（テレポートなし）
+Center map=地図を中央に
+Center marker=マーカーを中央に
+DISTANCE BETWEEN TWO POINTS (horizontal X/Z)=2点間の距離（水平 X/Z）
+Point A=地点 A
+Point B=地点 B
+Me=自分
+Marker=マーカー
+Map=地図
+Measurement unit=測定単位
+Measure=測定
+Clear=消去
+Bearing=方位角
+Choose both points A and B.=地点 A と B を選択してください。
+A map click selects the tile center. Enter X/Z for precise measurement.=クリックすると区画の中心を選びます。正確な測定は X/Z を入力してください。
+One tile=1区画
+One block @= one meter (convention).=1ブロック @= 1メートル（換算上）。
+Back to Atlas=地図帳に戻る
+Open Atlas ruler and navigation=地図帳の定規とナビゲーションを開く
+Map selection uses the center of its quadrant.=区画の中心を選択しました。
+Click a discovered tile in the Atlas.=探索済みの区画をクリックしてください。
+First select a marker in the Atlas.=先に地図帳でマーカーを選んでください。
+Invalid coordinates.=座標が無効です。
+Map Tools=地図ツール
+Walk=歩く
+Click map tiles to center=区画をクリックして中央に

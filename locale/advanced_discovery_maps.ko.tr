@@ -175,3 +175,33 @@ Show or hide the in-game clock=게임 시계 표시 또는 숨기기
 Usage: /reloj [on|off]=사용법: /reloj [on|off]
 Clock HUD enabled=시계 표시됨
 Clock HUD disabled=시계 숨김
+Topography=지형도
+
+# P7-B2: Navegación y medición
+MAP NAVIGATION AND RULER=지도 탐색 및 자
+Jump to world coordinates X / Z (no teleport)=세계 좌표 X/Z로 이동 (순간이동 아님)
+Center map=지도 중앙 정렬
+Center marker=표식 중앙 정렬
+DISTANCE BETWEEN TWO POINTS (horizontal X/Z)=두 지점 사이 거리 (수평 X/Z)
+Point A=지점 A
+Point B=지점 B
+Me=나
+Marker=표식
+Map=지도
+Measurement unit=측정 단위
+Measure=측정
+Clear=지우기
+Bearing=방위각
+Choose both points A and B.=지점 A와 B를 선택하세요.
+A map click selects the tile center. Enter X/Z for precise measurement.=클릭하면 구역 중심을 선택합니다. 정확한 측정은 X/Z를 입력하세요.
+One tile=한 구역
+One block @= one meter (convention).=블록 하나 @= 1미터 (환산 기준).
+Back to Atlas=지도책으로 돌아가기
+Open Atlas ruler and navigation=지도책 자와 탐색 열기
+Map selection uses the center of its quadrant.=구역 중심을 선택했습니다.
+Click a discovered tile in the Atlas.=탐색한 구역을 클릭하세요.
+First select a marker in the Atlas.=먼저 지도책에서 표식을 선택하세요.
+Invalid coordinates.=잘못된 좌표입니다.
+Map Tools=지도 도구
+Walk=걷기
+Click map tiles to center=구역을 눌러 중앙 정렬

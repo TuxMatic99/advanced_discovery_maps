@@ -175,3 +175,33 @@ Show or hide the in-game clock=显示或隐藏游戏时钟
 Usage: /reloj [on|off]=用法：/reloj [on|off]
 Clock HUD enabled=时钟已启用
 Clock HUD disabled=时钟已关闭
+Topography=地形图
+
+# P7-B2: Navegación y medición
+MAP NAVIGATION AND RULER=地图导航与测距尺
+Jump to world coordinates X / Z (no teleport)=跳转到世界坐标 X/Z（不传送角色）
+Center map=地图居中
+Center marker=定位标记
+DISTANCE BETWEEN TWO POINTS (horizontal X/Z)=两点之间的距离（水平 X/Z）
+Point A=点 A
+Point B=点 B
+Me=我
+Marker=标记
+Map=地图
+Measurement unit=测量单位
+Measure=测量
+Clear=清除
+Bearing=方位角
+Choose both points A and B.=请选择点 A 和 B。
+A map click selects the tile center. Enter X/Z for precise measurement.=点击选择区块中心；要精确测量，请输入 X/Z 坐标。
+One tile=一个区块
+One block @= one meter (convention).=一个方块 @= 一米（换算约定）。
+Back to Atlas=返回地图册
+Open Atlas ruler and navigation=打开地图册测距与导航
+Map selection uses the center of its quadrant.=已选择区块中心。
+Click a discovered tile in the Atlas.=点击地图册中已探索的区块。
+First select a marker in the Atlas.=请先在地图册中选择一个标记。
+Invalid coordinates.=坐标无效。
+Map Tools=地图工具
+Walk=行走
+Click map tiles to center=点击区块以居中

@@ -175,3 +175,33 @@ Show or hide the in-game clock=Mostrar ou ocultar o relógio do jogo
 Usage: /reloj [on|off]=Uso: /reloj [on|off]
 Clock HUD enabled=Relógio ativado
 Clock HUD disabled=Relógio desativado
+Topography=Topografia
+
+# P7-B2: Navegación y medición
+MAP NAVIGATION AND RULER=NAVEGAÇÃO E RÉGUA DO MAPA
+Jump to world coordinates X / Z (no teleport)=Ir para coordenadas X/Z do mundo (sem teleporte)
+Center map=Centrar mapa
+Center marker=Centrar marcador
+DISTANCE BETWEEN TWO POINTS (horizontal X/Z)=DISTÂNCIA ENTRE DOIS PONTOS (horizontal X/Z)
+Point A=Ponto A
+Point B=Ponto B
+Me=Eu
+Marker=Marcador
+Map=Mapa
+Measurement unit=Unidade de medida
+Measure=Medir
+Clear=Limpar
+Bearing=Rumo
+Choose both points A and B.=Selecione os pontos A e B.
+A map click selects the tile center. Enter X/Z for precise measurement.=Um clique seleciona o centro do quadrante. Digite X/Z para medição precisa.
+One tile=Um quadrante
+One block @= one meter (convention).=Um bloco @= um metro (por convenção).
+Back to Atlas=Voltar ao Atlas
+Open Atlas ruler and navigation=Abrir régua e navegação do Atlas
+Map selection uses the center of its quadrant.=O centro do quadrante foi selecionado.
+Click a discovered tile in the Atlas.=Clique num quadrante explorado do Atlas.
+First select a marker in the Atlas.=Selecione primeiro um marcador no Atlas.
+Invalid coordinates.=Coordenadas inválidas.
+Map Tools=Ferramentas do mapa
+Walk=Caminhar
+Click map tiles to center=Clique para centralizar o mapa

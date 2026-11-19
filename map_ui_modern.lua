@@ -78,7 +78,8 @@ function P.show_map(player_name)
     local tile_px = 1.65 * zoom
     local radius = min(16, ceil(max(map_w, map_h) / tile_px / 2) + 2)
     local mode = P.player_map_mode[player_name] or "standard"
-    local suffix = mode == "relief" and "_relief" or mode == "cave" and "_cave" or ""
+    local suffix = mode == "relief" and "_relief" or mode == "cave" and "_cave"
+        or (mode == "topo" and P.topo_enabled) and "_topo1" or ""
     local out = {}
     local waiting_media = false
 
@@ -122,6 +123,18 @@ function P.show_map(player_name)
                         local ver = P.tile_versions and P.tile_versions[base] or 0
                         local version_name = ver > 0 and (base .. "_v" .. ver) or base
                         local file_base = version_name .. suffix
+                        if mode == "topo" and P.topo_enabled then
+                            local topofile = io.open(map_path .. file_base .. ".png", "rb")
+                            if topofile then
+                                topofile:close()
+                            else
+                                -- La primera visita a un mapa antiguo genera la capa
+                                -- de forma gradual. Se muestra el relieve mientras tanto.
+                                if P.request_topo_tile then P.request_topo_tile(tx, tz) end
+                                file_base = version_name .. "_relief"
+                                waiting_media = true
+                            end
+                        end
                         local fp = map_path .. file_base .. ".png"
                         local f = io.open(fp, "rb")
                         if f then f:close() end
@@ -161,6 +174,12 @@ function P.show_map(player_name)
             marker_at(m, ci.color, m.name)
         end
     end
+    -- P7-B2: visualizar puntos seleccionados sin añadir lecturas del terreno.
+    if P.adm_nav_get_points then
+        local point_a, point_b = P.adm_nav_get_points(player_name)
+        if point_a then marker_at(point_a, "#FFCD53", "A") end
+        if point_b then marker_at(point_b, "#76D8FF", "B") end
+    end
     if P.get_party_member_positions then
         for member, entry in pairs(P.get_party_member_positions(player_name) or {}) do
             if entry.pos then marker_at(entry.pos, "#73BBFF", member) end
@@ -184,6 +203,7 @@ function P.show_map(player_name)
     local bw = .82
     local mid = lx + (lw - bw) / 2
     add(out, fmt("label[%.2f,1.43;%s]", lx, esc(S("NAVIGATION"))))
+    add(out, fmt("label[%.2f,1.68;%s]", lx, esc(S("Click map tiles to center"))))
     add(out, fmt("button[%.2f,1.87;%.2f,0.56;nav_north;N]", mid, bw))
     add(out, fmt("button[%.2f,2.50;%.2f,0.56;nav_west;W]", lx + .20, bw))
     add(out, fmt("button[%.2f,2.50;%.2f,0.56;nav_east;E]", lx + lw - bw - .20, bw))
@@ -192,7 +212,10 @@ function P.show_map(player_name)
     add(out, fmt("label[%.2f,4.84;%s]", lx, esc(S("ZOOM"))))
     add(out, fmt("button[%.2f,5.13;1.17,0.57;zoom_out;−]", lx))
     add(out, fmt("button[%.2f,5.13;1.17,0.57;zoom_in;+]", lx + lw - 1.17))
-    local mode_name = mode == "relief" and S("Relief") or mode == "cave" and S("Caves") or S("Natural")
+    local mode_name = mode == "relief" and S("Relief")
+        or mode == "cave" and S("Caves")
+        or (mode == "topo" and P.topo_enabled) and S("Topography")
+        or S("Natural")
     add(out, fmt("label[%.2f,6.00;%s]", lx, esc(S("MAP LAYER"))))
     add(out, fmt("button[%.2f,6.31;%.2f,0.57;toggle_map_mode;%s]", lx, lw, esc(mode_name)))
     add(out, fmt("button[%.2f,7.04;%.2f,0.57;toggle_grid;%s]", lx, lw, esc(P.player_show_grid[player_name] and S("Hide Grid") or S("Show Grid"))))
@@ -202,10 +225,13 @@ function P.show_map(player_name)
     local selected_idx = 1
     for i, unit in ipairs(units) do if unit == selected_unit then selected_idx = i end end
     add(out, fmt("dropdown[%.2f,8.26;%.2f,0.68;unidad_selector;%s;%d]", lx, lw, table.concat(units, ","), selected_idx))
-    -- button_exit permite pasar del formulario modal al HUD no modal.
+    -- Herramienta de navegación y medición, sin alterar el HUD móvil.
+    local nav_button_width = (lw - .12) / 2
+    add(out, fmt("button_exit[%.2f,9.03;%.2f,0.45;adm_nav_tools;%s]",
+        lx, nav_button_width, esc(S("Map Tools"))))
     if core.settings:get_bool("adm_walkmap_enabled", true) then
         add(out, fmt("button_exit[%.2f,9.03;%.2f,0.45;adm_walk_switch;%s]",
-            lx, lw, esc(S("Walk with Map"))))
+            lx + nav_button_width + .12, nav_button_width, esc(S("Walk"))))
     end
 
     -- Herramientas de la derecha; mismos nombres de campo que la interfaz anterior.
@@ -263,6 +289,11 @@ function P.show_map(player_name)
     session.elapsed = 0
     atlas_sessions[player_name] = session
     core.show_formspec(player_name, "persistent_map:map", table.concat(out))
+end
+
+-- Suspender la actualización del Atlas al abrir herramientas modales.
+function P.adm_suspend_atlas(name)
+    atlas_sessions[name] = nil
 end
 
 -- P5B: la descarga de imágenes no debe abrir un formulario cerrado ni

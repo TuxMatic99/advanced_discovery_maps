@@ -18,9 +18,15 @@ if command -v texlua >/dev/null 2>&1; then
     reference="$(mktemp)"
     git show 4d08663:map_engine_progressive.lua > "$reference"
     texlua tests/test_adm_p7a_equivalence.lua "$reference" map_engine_progressive.lua
+    texlua tests/test_adm_p7b1.lua .
+    texlua tests/test_adm_topography_renderer.lua .
     rm -f "$reference"
 else
     echo 'AVISO: texlua no está instalado; se omiten pruebas Lua simuladas.'
 fi
+if command -v texlua >/dev/null 2>&1; then
+    texlua tests/test_adm_navigation_tools.lua .
+fi
+python3 tests/test_adm_p7b2_integration.py
 git diff --check
 echo 'OK: comprobaciones estáticas completadas; resta probar dentro del juego.'

@@ -175,3 +175,33 @@ Show or hide the in-game clock=
 Usage: /reloj [on|off]=
 Clock HUD enabled=
 Clock HUD disabled=
+Topography=
+
+# P7-B2: Navegación y medición
+MAP NAVIGATION AND RULER=
+Jump to world coordinates X / Z (no teleport)=
+Center map=
+Center marker=
+DISTANCE BETWEEN TWO POINTS (horizontal X/Z)=
+Point A=
+Point B=
+Me=
+Marker=
+Map=
+Measurement unit=
+Measure=
+Clear=
+Bearing=
+Choose both points A and B.=
+A map click selects the tile center. Enter X/Z for precise measurement.=
+One tile=
+One block @= one meter (convention).=
+Back to Atlas=
+Open Atlas ruler and navigation=
+Map selection uses the center of its quadrant.=
+Click a discovered tile in the Atlas.=
+First select a marker in the Atlas.=
+Invalid coordinates.=
+Map Tools=
+Walk=
+Click map tiles to center=
